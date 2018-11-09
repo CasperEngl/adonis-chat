@@ -1,20 +1,22 @@
+import axios from 'axios';
+
 import { store } from '../components/App';
 
 export const AUTHENTICATE_USER = 'AUTHENTICATE_USER';
-export const UPDATE_USER = 'UPDATE_USER';
 export const REGISTER_USER = 'REGISTER_USER';
 export const LOGIN_USER = 'LOGIN_USER';
 export const LOGOUT_USER = 'LOGOUT_USER';
-export const DELETE_TOKEN = 'DELETE_TOKEN';
+export const UPDATE_TOKENS = 'UPDATE_TOKENS';
 
 export function userAuthenticate({ token }) {
   return async function (dispatch) {
     try {
-      const { authType } = store.getState().user;
+      const { type } = store.getState().user.tokens;
 
-      const response = await fetch('/api/v1/account/verify', {
+      const response = await axios({
+        url: '/api/v1/account/verify',
         headers: {
-          Authorization: `${authType} ${token}`,
+          Authorization: `${type} ${token}`,
         },
       });
       const json = await response.json();
@@ -35,17 +37,6 @@ export function userAuthenticate({ token }) {
   };
 }
 
-export function userUpdate(user = {}) {
-  console.log('Update user', user);
-
-  return {
-    type: UPDATE_USER,
-    data: {
-      user,
-    },
-  };
-}
-
 export function userRegister({
   email,
   firstName,
@@ -61,12 +52,13 @@ export function userRegister({
         password,
       });
 
-      const response = await fetch('/api/v1/account/register', {
-        body: data,
+      const response = await axios({
+        method: 'POST',
+        url: '/api/v1/account/register',
         headers: {
           'Content-Type': 'application/json',
         },
-        method: 'POST',
+        data,
       });
       const json = await response.json();
 
@@ -85,12 +77,13 @@ export function userLogin({ email, password }) {
         password,
       });
 
-      const response = await fetch('/api/v1/account/login', {
-        body: data,
+      const response = await axios({
+        method: 'POST',
+        url: '/api/v1/account/login',
         headers: {
           'Content-Type': 'application/json',
         },
-        method: 'POST',
+        data,
       });
       const json = await response.json();
 
@@ -118,53 +111,64 @@ export function userLogin({ email, password }) {
 export function userLogout({ token, refreshToken }) {
   return async function (dispatch) {
     try {
-      const { authType } = store.getState().user;
+      const { type } = store.getState().user.tokens;
 
       const data = JSON.stringify({
         refreshToken,
       });
 
-      const response = await fetch('/api/v1/account/logout', {
-        body: data,
+      const response = await axios({
+        method: 'POST',
+        url: '/api/v1/account/logout',
         headers: {
-          Authorization: `${authType} ${token}`,
+          Authorization: `${type} ${token}`,
           'Content-Type': 'application/json',
         },
-        method: 'POST',
+        data,
       });
       const json = await response.json();
 
       console.log('User logout', json);
-
-      return dispatch({
-        type: LOGOUT_USER,
-      });
     } catch (err) {
       console.error(err);
     }
+
+    return dispatch({
+      type: LOGOUT_USER,
+    });
   };
 }
 
-export function refreshToken({ token, refreshToken }) {
-  return async function () {
+export function updateTokens({ token, refreshToken }) {
+  return async function (dispatch) {
     try {
-      const { authType } = store.getState().user;
+      const { type } = store.getState().user.tokens;
 
       const data = JSON.stringify({
         refreshToken,
       });
 
-      const response = await fetch('/api/v1/account/token/refresh', {
-        body: data,
+      const response = await axios({
+        method: 'POST',
+        url: '/api/v1/account/token/',
         headers: {
-          Authorization: `${authType} ${token}`,
+          Authorization: `${type} ${token}`,
           'Content-Type': 'application/json',
         },
-        method: 'POST',
+        data,
       });
       const json = await response.json();
 
       console.log('Token refresh', json);
+
+      if (json.success) {
+        return dispatch({
+          type: UPDATE_TOKENS,
+          data: {
+            ...json.data,
+          },
+        });
+      }
     } catch (err) {
       console.error(err);
     }

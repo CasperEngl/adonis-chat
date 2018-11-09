@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 import { store } from '../components/App';
 
 import { LOGOUT_USER } from './user';
@@ -9,11 +11,12 @@ export const ALL_CONVERSATIONS = 'ALL_CONVERSATIONS';
 export function getUsers({ token }) {
   return async function (dispatch) {
     try {
-      const { authType } = store.getState().user;
+      const { type } = store.getState().user.tokens;
 
-      const response = await fetch('/api/v1/user/', {
+      const response = await axios({
+        url: '/api/v1/user/',
         headers: {
-          Authorization: `${authType} ${token}`,
+          Authorization: `${type} ${token}`,
         },
       });
       const json = await response.json();
@@ -43,11 +46,12 @@ export function getUsers({ token }) {
 export function getUser({ userId, token }) {
   return async function (dispatch) {
     try {
-      const { authType } = store.getState().user;
+      const { type } = store.getState().user.tokens;
 
-      const response = await fetch(`/api/v1/user/${userId}`, {
+      const response = await axios({
+        url: `/api/v1/user/${userId}`,
         headers: {
-          Authorization: `${authType} ${token}`,
+          Authorization: `${type} ${token}`,
         },
       });
       const json = await response.json();
@@ -67,11 +71,12 @@ export function getUser({ userId, token }) {
 export function getConversation({ conversationId, token }) {
   return async function (dispatch) {
     try {
-      const { authType } = store.getState().user;
+      const { type } = store.getState().user.tokens;
 
-      const response = await fetch(`/api/v1/conversation/${conversationId}`, {
+      const response = await axios({
+        url: `/api/v1/conversation/${conversationId}`,
         headers: {
-          Authorization: `${authType} ${token}`,
+          Authorization: `${type} ${token}`,
         },
       });
       const json = await response.json();
@@ -101,11 +106,12 @@ export function getConversation({ conversationId, token }) {
 export function getConversations({ token }) {
   return async function (dispatch) {
     try {
-      const { authType } = store.getState().user;
+      const { type } = store.getState().user.tokens;
 
-      const response = await fetch('/api/v1/conversation/', {
+      const response = await axios({
+        url: '/api/v1/conversation/',
         headers: {
-          Authorization: `${authType} ${token}`,
+          Authorization: `${type} ${token}`,
         },
       });
       const json = await response.json();
@@ -135,19 +141,20 @@ export function getConversations({ token }) {
 export function newConversation({ recipientId, message, token }) {
   return async function (dispatch) {
     try {
-      const { authType } = store.getState().user;
+      const { type } = store.getState().user.tokens;
 
       const data = JSON.stringify({
         content: message,
       });
 
-      const response = await fetch(`/api/v1/conversation/new/${recipientId}`, {
-        body: data,
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `${authType} ${token}`,
-        },
+      const response = await axios({
         method: 'POST',
+        url: `/api/v1/conversation/new/${recipientId}`,
+        headers: {
+          Authorization: `${type} ${token}`,
+          'Content-Type': 'application/json',
+        },
+        data,
       });
       const json = await response.json();
 
@@ -171,19 +178,20 @@ export function newConversation({ recipientId, message, token }) {
 export function sendReply({ conversationId, message, token }) {
   return async function (dispatch) {
     try {
-      const { authType } = store.getState().user;
+      const { type } = store.getState().user.tokens;
 
       const data = JSON.stringify({
         content: message,
       });
 
-      const response = await fetch(`/api/v1/conversation/${conversationId}`, {
-        body: data,
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `${authType} ${token}`,
-        },
+      const response = await axios({
         method: 'POST',
+        url: `/api/v1/conversation/${conversationId}`,
+        headers: {
+          Authorization: `${type} ${token}`,
+          'Content-Type': 'application/json',
+        },
+        data,
       });
       const json = await response.json();
 
