@@ -1,0 +1,55 @@
+@import '~bootstrap/scss/bootstrap';
+
+// Emoji Picker
+$bg_picker: #FFF;
+$size_emoji: 1.5rem;
+$padding_emoji: 1rem;
+$top_skin_tone: 20px;
+$top_magnifier: 18px;
+
+@import '~emoji-picker-react/dist/universal/style.scss';
+// /Emoji Picker
+
+$content-margin: 56px;
+$content-padding: 1rem #{$grid-gutter-width / 2};
+
+body {
+  background: #F7F7F7;
+}
+
+.tooltip {
+  z-index: 0;
+
+  &.show {
+    opacity: 1;
+  }
+}
+
+.navbar,
+.content-wrapper {
+  padding-left: unquote('max(1rem, env(safe-area-inset-left))');
+  padding-right: unquote('max(1rem, env(safe-area-inset-right))');
+}
+
+.content-wrapper {
+  margin: $content-margin auto;
+  padding: $content-padding;
+}
+
+.sidebar-menu {
+  margin-top: $content-margin;
+}
+
+.conversation {
+  &__avatar {
+    @include media-breakpoint-down(sm) {
+      margin-bottom: .5rem;
+    }
+  }
+}
+
+.emoji-tooltip {
+  max-width: none;
+  background: none;
+  opacity: 1;
+}
