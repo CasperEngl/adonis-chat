@@ -10,3 +10,8 @@ tmp
 
 # The development sqlite file
 database/development.sqlite
+
+# public files
+public/img/*
+public/js/*
+public/style/*
