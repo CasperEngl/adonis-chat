@@ -127,8 +127,6 @@ class AuthController {
         .newRefreshToken()
         .generateForRefreshToken(refreshToken);
 
-      console.log(updatedTokens);
-
       return {
         success: true,
         user: {
