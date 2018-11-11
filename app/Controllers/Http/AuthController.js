@@ -40,15 +40,9 @@ class AuthController {
     try {
       const { email, password } = request.only(['email', 'password']);
 
-      const authCheck = await auth
+      const tokens = await auth
         .withRefreshToken()
         .attempt(email, password);
-
-      const {
-        token,
-        refreshToken,
-        type,
-      } = authCheck;
 
       const {
         id,
@@ -59,17 +53,18 @@ class AuthController {
 
       return {
         success: true,
-        data: {
-          user: {
-            token,
-            refreshToken,
-            authType: type,
-            account: {
-              id,
-              email: userEmail,
-              firstName,
-              lastName,
-            },
+        user: {
+          tokens: {
+            token: tokens.token,
+            refreshToken: tokens.refreshToken,
+            type: tokens.type,
+            createdAt: new Date().toISOString(),
+          },
+          account: {
+            id,
+            email: userEmail,
+            firstName,
+            lastName,
           },
         },
       };
@@ -128,9 +123,23 @@ class AuthController {
     try {
       const { refreshToken } = request.only(['refreshToken']);
 
-      return await auth
+      const tokens = await auth
         .newRefreshToken()
         .generateForRefreshToken(refreshToken);
+
+      console.log(updatedTokens);
+
+      return {
+        success: true,
+        user: {
+          tokens: {
+            token: tokens.token,
+            refreshToken: tokens.refreshToken,
+            type: tokens.type,
+            createdAt: new Date().toISOString(),
+          },
+        }
+      };
     } catch (err) {
       console.error(err);
 
