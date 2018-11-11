@@ -13,21 +13,20 @@ export function userAuthenticate({ token }) {
     try {
       const { type } = store.getState().user.tokens;
 
-      const response = await axios({
+      const json = await axios({
         url: '/api/v1/account/verify',
         headers: {
           Authorization: `${type} ${token}`,
         },
       });
-      const json = await response.json();
 
       console.log('User Authentication', json);
 
-      if (json.success) {
+      if (json.data.success) {
         return dispatch({
           type: AUTHENTICATE_USER,
           data: {
-            status: json.success, // Dispatch the success status from the server
+            status: json.data.success, // Dispatch the success status from the server
           },
         });
       }
@@ -52,7 +51,7 @@ export function userRegister({
         password,
       });
 
-      const response = await axios({
+      const json = await axios({
         method: 'POST',
         url: '/api/v1/account/register',
         headers: {
@@ -60,7 +59,6 @@ export function userRegister({
         },
         data,
       });
-      const json = await response.json();
 
       console.log('User Register', json);
     } catch (err) {
@@ -77,7 +75,7 @@ export function userLogin({ email, password }) {
         password,
       });
 
-      const response = await axios({
+      const json = await axios({
         method: 'POST',
         url: '/api/v1/account/login',
         headers: {
@@ -85,11 +83,10 @@ export function userLogin({ email, password }) {
         },
         data,
       });
-      const json = await response.json();
 
       console.log('User login', json);
 
-      if (json.success) {
+      if (json.data.success) {
         const {
           user,
         } = json.data;
@@ -97,7 +94,7 @@ export function userLogin({ email, password }) {
         return dispatch({
           type: LOGIN_USER,
           data: {
-            status: json.success,
+            status: json.data.success,
             user,
           },
         });
@@ -117,7 +114,7 @@ export function userLogout({ token, refreshToken }) {
         refreshToken,
       });
 
-      const response = await axios({
+      const json = await axios({
         method: 'POST',
         url: '/api/v1/account/logout',
         headers: {
@@ -126,7 +123,6 @@ export function userLogout({ token, refreshToken }) {
         },
         data,
       });
-      const json = await response.json();
 
       console.log('User logout', json);
     } catch (err) {
@@ -148,7 +144,7 @@ export function updateTokens({ token, refreshToken }) {
         refreshToken,
       });
 
-      const response = await axios({
+      const json = await axios({
         method: 'POST',
         url: '/api/v1/account/token/',
         headers: {
@@ -157,11 +153,10 @@ export function updateTokens({ token, refreshToken }) {
         },
         data,
       });
-      const json = await response.json();
 
       console.log('Token refresh', json);
 
-      if (json.success) {
+      if (json.data.success) {
         return dispatch({
           type: UPDATE_TOKENS,
           data: {

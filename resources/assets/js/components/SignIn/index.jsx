@@ -128,7 +128,7 @@ class SignIn extends PureComponent {
 
 const mapStateToProps = state => ({
   isAuthenticated: state.user.isAuthenticated,
-  token: state.user.token,
+  token: state.user.tokens.token,
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({

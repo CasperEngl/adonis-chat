@@ -1,13 +1,23 @@
 import {
-  AUTHENTICATE_USER, UPDATE_USER, LOGIN_USER, LOGOUT_USER, DELETE_TOKEN,
+  AUTHENTICATE_USER,
+  LOGIN_USER,
+  LOGOUT_USER,
+  UPDATE_TOKENS,
 } from '../actions/user';
 
 const initialState = {
   isAuthenticated: false,
-  token: '',
-  refreshToken: '',
-  authType: '',
-  account: {},
+  tokens: {
+    token: '',
+    refreshToken: '',
+    type: '',
+  },
+  account: {
+    id: 0,
+    email: '',
+    firstName: '',
+    lastName: '',
+  },
 };
 
 export default (state = initialState, action) => {
@@ -19,33 +29,24 @@ export default (state = initialState, action) => {
         ...state,
         isAuthenticated: data.status,
       };
-    case UPDATE_USER:
-      return {
-        ...state,
-        account: data,
-      };
     case LOGIN_USER:
       return {
         ...state,
         isAuthenticated: true,
-        token: data.user.token,
-        refreshToken: data.user.refreshToken,
-        authType: data.user.authType,
+        tokens: data.user.tokens,
         account: data.user.account,
       };
     case LOGOUT_USER:
       return {
         ...state,
         isAuthenticated: initialState.isAuthenticated,
-        token: initialState.token,
-        refreshToken: initialState.refreshToken,
-        authType: initialState.authType,
+        tokens: initialState.tokens,
         account: initialState.account,
       };
-    case DELETE_TOKEN:
+    case UPDATE_TOKENS:
       return {
         ...state,
-        token: initialState.token,
+        tokens: data.tokens,
       };
 
     default:

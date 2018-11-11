@@ -1,4 +1,5 @@
 import React, { PureComponent } from 'react';
+import axios from 'axios';
 
 class Users extends PureComponent {
   constructor(props) {
@@ -11,8 +12,7 @@ class Users extends PureComponent {
 
   async componentDidMount() {
     try {
-      const response = await fetch('/api/v1/user/');
-      const json = await response.json();
+      const json = await axios('/api/v1/user/');
 
       this.setState({
         users: json.users,

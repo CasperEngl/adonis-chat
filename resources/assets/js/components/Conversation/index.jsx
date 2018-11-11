@@ -77,7 +77,7 @@ class Conversation extends PureComponent {
 }
 
 const mapStateToProps = state => ({
-  token: state.user.token,
+  token: state.user.tokens.token,
   messages: state.conversation.currentConversation.messages,
   userId: state.user.account.id,
 });

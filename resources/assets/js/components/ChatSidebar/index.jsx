@@ -141,8 +141,8 @@ class ChatSidebar extends Component {
 
 const mapStateToProps = state => ({
   isAuthenticated: state.user.isAuthenticated,
-  token: state.user.token,
-  refreshToken: state.user.refreshToken,
+  token: state.user.tokens.token,
+  refreshToken: state.user.tokens.refreshToken,
   navOpen: state.ui.navOpen,
   conversations: state.conversation.conversations,
   id: state.user.account.id,

@@ -35,7 +35,11 @@ class ChatApp extends PureComponent {
   }
 
   componentDidMount() {
-    const { getConversations, userAuthenticate, token } = this.props;
+    const {
+      getConversations,
+      userAuthenticate,
+      token,
+    } = this.props;
 
     if (!token) {
       return;
@@ -71,7 +75,7 @@ class ChatApp extends PureComponent {
 
 const mapStateToProps = state => ({
   isAuthenticated: state.user.isAuthenticated,
-  token: state.user.token,
+  token: state.user.tokens.token,
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({

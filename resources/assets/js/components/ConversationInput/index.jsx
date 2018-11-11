@@ -185,7 +185,7 @@ class ConversationInput extends Component {
 }
 
 const mapStateToProps = state => ({
-  token: state.user.token,
+  token: state.user.tokens.token,
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({

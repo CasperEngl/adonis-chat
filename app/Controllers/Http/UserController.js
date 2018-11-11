@@ -16,9 +16,7 @@ class UserController {
 
       return {
         success: true,
-        data: {
-          users,
-        },
+        users,
       };
     } catch (err) {
       console.error(err);

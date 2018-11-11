@@ -13,17 +13,16 @@ export function getUsers({ token }) {
     try {
       const { type } = store.getState().user.tokens;
 
-      const response = await axios({
+      const json = await axios({
         url: '/api/v1/user/',
         headers: {
           Authorization: `${type} ${token}`,
         },
       });
-      const json = await response.json();
 
       console.log('Get Users', json);
 
-      if (json.success) {
+      if (json.data.success) {
         const { users } = json.data;
 
         return dispatch({
@@ -48,16 +47,15 @@ export function getUser({ userId, token }) {
     try {
       const { type } = store.getState().user.tokens;
 
-      const response = await axios({
+      const json = await axios({
         url: `/api/v1/user/${userId}`,
         headers: {
           Authorization: `${type} ${token}`,
         },
       });
-      const json = await response.json();
 
       console.log('Get user', json);
-      if (!json.success) {
+      if (!json.data.success) {
         return dispatch({
           type: LOGOUT_USER,
         });
@@ -73,17 +71,16 @@ export function getConversation({ conversationId, token }) {
     try {
       const { type } = store.getState().user.tokens;
 
-      const response = await axios({
+      const json = await axios({
         url: `/api/v1/conversation/${conversationId}`,
         headers: {
           Authorization: `${type} ${token}`,
         },
       });
-      const json = await response.json();
 
       console.log('Get Conversation', json);
 
-      if (json.success) {
+      if (json.data.success) {
         const { messages } = json.data;
 
         return dispatch({
@@ -108,17 +105,16 @@ export function getConversations({ token }) {
     try {
       const { type } = store.getState().user.tokens;
 
-      const response = await axios({
+      const json = await axios({
         url: '/api/v1/conversation/',
         headers: {
           Authorization: `${type} ${token}`,
         },
       });
-      const json = await response.json();
 
       console.log('Get user conversations', json);
 
-      if (json.success) {
+      if (json.data.success) {
         const { conversations } = json.data;
 
         return dispatch({
@@ -147,7 +143,7 @@ export function newConversation({ recipientId, message, token }) {
         content: message,
       });
 
-      const response = await axios({
+      const json = await axios({
         method: 'POST',
         url: `/api/v1/conversation/new/${recipientId}`,
         headers: {
@@ -156,11 +152,10 @@ export function newConversation({ recipientId, message, token }) {
         },
         data,
       });
-      const json = await response.json();
 
       console.log('New Conversation', json);
 
-      if (json.success) {
+      if (json.data.success) {
         const { conversationId } = json.data;
 
         return conversationId;
@@ -184,7 +179,7 @@ export function sendReply({ conversationId, message, token }) {
         content: message,
       });
 
-      const response = await axios({
+      const json = await axios({
         method: 'POST',
         url: `/api/v1/conversation/${conversationId}`,
         headers: {
@@ -193,11 +188,10 @@ export function sendReply({ conversationId, message, token }) {
         },
         data,
       });
-      const json = await response.json();
 
       console.log(json);
 
-      if (json.success) {
+      if (json.data.success) {
         return true;
       }
 
