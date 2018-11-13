@@ -106,11 +106,9 @@ export function userLogout({ token, refreshToken }) {
   };
 }
 
-export function updateTokens({ token, refreshToken }) {
+export function updateTokens({ refreshToken }) {
   return async function (dispatch) {
     try {
-      const { type } = store.getState().user.tokens;
-
       const data = JSON.stringify({
         refreshToken,
       });
@@ -119,7 +117,6 @@ export function updateTokens({ token, refreshToken }) {
         method: 'POST',
         url: '/api/v1/account/token/',
         headers: {
-          Authorization: `${type} ${token}`,
           'Content-Type': 'application/json',
         },
         data,
@@ -131,7 +128,7 @@ export function updateTokens({ token, refreshToken }) {
         return dispatch({
           type: UPDATE_TOKENS,
           data: {
-            ...json.data,
+            ...json.data.user,
           },
         });
       }
