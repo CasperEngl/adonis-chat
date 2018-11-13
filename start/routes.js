@@ -21,19 +21,17 @@ Route.group(() => {
 }).prefix('api/v1/user');
 
 Route.group(() => {
-  
+
 }).prefix('api/v1/message');
 
 Route.group(() => {
-  Route.any('login', 'AuthController.login');
+  Route.post('login', 'LoginController.index');
 
-  Route.post('register', 'AuthController.register');
+  Route.post('logout', 'LogoutController.index').middleware(['auth']);
 
-  Route.post('logout', 'AuthController.logout').middleware(['auth']);
+  Route.post('register', 'RegisterController.index');
 
-  Route.get('verify', 'AuthController.verify').middleware(['auth']);
-
-  Route.post('token', 'AuthController.refreshToken');
+  Route.post('token', 'TokenController.refresh');
 }).prefix('api/v1/account');
 
 Route.any('*', ({ view }) => view.render('index'));
