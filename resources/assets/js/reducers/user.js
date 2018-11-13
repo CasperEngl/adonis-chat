@@ -10,6 +10,7 @@ const initialState = {
     token: '',
     refreshToken: '',
     type: '',
+    createdAt: '',
   },
   account: {
     id: 0,
