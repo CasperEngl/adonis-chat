@@ -43,7 +43,7 @@ export function getUsers({ token }) {
 }
 
 export function getUser({ userId, token }) {
-  return async function (dispatch) {
+  return async function () {
     try {
       const { type } = store.getState().user.tokens;
 
@@ -55,11 +55,6 @@ export function getUser({ userId, token }) {
       });
 
       console.log('Get user', json);
-      if (!json.data.success) {
-        return dispatch({
-          type: LOGOUT_USER,
-        });
-      }
     } catch (err) {
       console.error(err);
     }
@@ -90,10 +85,6 @@ export function getConversation({ conversationId, token }) {
           },
         });
       }
-
-      return dispatch({
-        type: LOGOUT_USER,
-      });
     } catch (err) {
       console.error(err);
     }
@@ -124,10 +115,6 @@ export function getConversations({ token }) {
           },
         });
       }
-
-      return dispatch({
-        type: LOGOUT_USER,
-      });
     } catch (err) {
       console.error(err);
     }
@@ -135,7 +122,7 @@ export function getConversations({ token }) {
 }
 
 export function newConversation({ recipientId, message, token }) {
-  return async function (dispatch) {
+  return async function () {
     try {
       const { type } = store.getState().user.tokens;
 
@@ -160,10 +147,6 @@ export function newConversation({ recipientId, message, token }) {
 
         return conversationId;
       }
-
-      return dispatch({
-        type: LOGOUT_USER,
-      });
     } catch (err) {
       console.error(err);
     }
@@ -171,7 +154,7 @@ export function newConversation({ recipientId, message, token }) {
 }
 
 export function sendReply({ conversationId, message, token }) {
-  return async function (dispatch) {
+  return async function () {
     try {
       const { type } = store.getState().user.tokens;
 
@@ -194,10 +177,6 @@ export function sendReply({ conversationId, message, token }) {
       if (json.data.success) {
         return true;
       }
-
-      return dispatch({
-        type: LOGOUT_USER,
-      });
     } catch (err) {
       console.error(err);
     }
