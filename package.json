@@ -41,6 +41,7 @@
     "emoji-js": "^3.4.1",
     "emoji-picker-react": "^2.1.1",
     "laravel-mix": "^2.1.14",
+    "ms": "^2.1.1",
     "pg": "^7.6.0",
     "prop-types": "^15.6.2",
     "react": "^16.6.1",
