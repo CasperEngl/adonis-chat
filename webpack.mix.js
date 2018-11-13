@@ -1,4 +1,4 @@
-let mix = require('laravel-mix');
+const mix = require('laravel-mix');
 
 mix
   .react('resources/assets/js/index.jsx', 'public/js/app.js')
