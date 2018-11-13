@@ -1,5 +1,4 @@
 import {
-  AUTHENTICATE_USER,
   LOGIN_USER,
   LOGOUT_USER,
   UPDATE_TOKENS,
@@ -24,11 +23,6 @@ export default (state = initialState, action) => {
   const { type, data } = action;
 
   switch (type) {
-    case AUTHENTICATE_USER:
-      return {
-        ...state,
-        isAuthenticated: data.status,
-      };
     case LOGIN_USER:
       return {
         ...state,

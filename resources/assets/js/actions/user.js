@@ -2,39 +2,10 @@ import axios from 'axios';
 
 import { store } from '../components/App';
 
-export const AUTHENTICATE_USER = 'AUTHENTICATE_USER';
 export const REGISTER_USER = 'REGISTER_USER';
 export const LOGIN_USER = 'LOGIN_USER';
 export const LOGOUT_USER = 'LOGOUT_USER';
 export const UPDATE_TOKENS = 'UPDATE_TOKENS';
-
-export function userAuthenticate({ token }) {
-  return async function (dispatch) {
-    try {
-      const { type } = store.getState().user.tokens;
-
-      const json = await axios({
-        url: '/api/v1/account/verify',
-        headers: {
-          Authorization: `${type} ${token}`,
-        },
-      });
-
-      console.log('User Authentication', json);
-
-      if (json.data.success) {
-        return dispatch({
-          type: AUTHENTICATE_USER,
-          data: {
-            status: json.data.success, // Dispatch the success status from the server
-          },
-        });
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  };
-}
 
 export function userRegister({
   email,

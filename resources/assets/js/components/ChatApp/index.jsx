@@ -15,7 +15,6 @@ import SignIn from '../SignIn';
 import SignUp from '../SignUp';
 import Users from '../Users';
 
-import { userAuthenticate } from '../../actions/user';
 import { getConversations } from '../../actions/conversation';
 import { closeNav } from '../../actions/ui';
 
@@ -23,7 +22,6 @@ class ChatApp extends PureComponent {
   static propTypes = {
     closeNav: PropTypes.func.isRequired,
     getConversations: PropTypes.func.isRequired,
-    userAuthenticate: PropTypes.func.isRequired,
     token: PropTypes.string.isRequired,
     isAuthenticated: PropTypes.bool.isRequired,
   }
@@ -37,7 +35,6 @@ class ChatApp extends PureComponent {
   componentDidMount() {
     const {
       getConversations,
-      userAuthenticate,
       token,
     } = this.props;
 
@@ -45,8 +42,7 @@ class ChatApp extends PureComponent {
       return;
     }
 
-    // getConversations({ token });
-    userAuthenticate({ token });
+    getConversations({ token });
   }
 
   render() {
@@ -79,7 +75,6 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-  userAuthenticate,
   getConversations,
   closeNav,
 }, dispatch);

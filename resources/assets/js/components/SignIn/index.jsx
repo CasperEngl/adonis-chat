@@ -15,11 +15,10 @@ import {
   Label,
 } from 'reactstrap';
 
-import { userAuthenticate, userLogin } from '../../actions/user';
+import { userLogin } from '../../actions/user';
 
 class SignIn extends PureComponent {
   static propTypes = {
-    userAuthenticate: PropTypes.func.isRequired,
     userLogin: PropTypes.func.isRequired,
     isAuthenticated: PropTypes.bool.isRequired,
     token: PropTypes.string.isRequired,
@@ -43,13 +42,11 @@ class SignIn extends PureComponent {
 
   async onSignIn() {
     const {
-      userAuthenticate,
       userLogin,
     } = this.props;
     const { email, password } = this.state;
 
     await userLogin({ email, password });
-    await userAuthenticate({ token: this.getToken() });
   }
 
   getToken() {
@@ -132,7 +129,6 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-  userAuthenticate,
   userLogin,
 }, dispatch);
 
