@@ -169,6 +169,15 @@
     node-guard "^1.0.0"
     uuid "^3.3.2"
 
+"@adonisjs/validator@^5.0.6":
+  version "5.0.6"
+  resolved "https://registry.yarnpkg.com/@adonisjs/validator/-/validator-5.0.6.tgz#5354cebcf578b964ca58de24436ae00718bd5fd4"
+  integrity sha512-Koql5nOSfRFhNwkvk38tAHLfpxwuOinZIuLhPP0zAfHCltrXCh02MfydfgA13vDc5LITJgWycXFv+FNb7ljCqg==
+  dependencies:
+    "@adonisjs/generic-exceptions" "^2.0.1"
+    indicative "^5.0.8"
+    lodash "^4.17.11"
+
 "@babel/code-frame@^7.0.0":
   version "7.0.0"
   resolved "https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.0.0.tgz#06e2ab19bdb535385559aabb5ba59729482800f8"
@@ -3574,10 +3583,10 @@ eslint-visitor-keys@^1.0.0:
   resolved "https://registry.yarnpkg.com/eslint-visitor-keys/-/eslint-visitor-keys-1.0.0.tgz#3f3180fb2e291017716acb4c9d6d5b5c34a6a81d"
   integrity sha512-qzm/XxIbxm/FHyH341ZrbnMUpe+5Bocte9xkmFMzPMjRaZMcXww+MpBptFvtU+79L362nqiLhekCxCxDPaUMBQ==
 
-eslint@^5.8.0:
-  version "5.8.0"
-  resolved "https://registry.yarnpkg.com/eslint/-/eslint-5.8.0.tgz#91fbf24f6e0471e8fdf681a4d9dd1b2c9f28309b"
-  integrity sha512-Zok6Bru3y2JprqTNm14mgQ15YQu/SMDkWdnmHfFg770DIUlmMFd/gqqzCHekxzjHZJxXv3tmTpH0C1icaYJsRQ==
+eslint@^5.9.0:
+  version "5.9.0"
+  resolved "https://registry.yarnpkg.com/eslint/-/eslint-5.9.0.tgz#b234b6d15ef84b5849c6de2af43195a2d59d408e"
+  integrity sha512-g4KWpPdqN0nth+goDNICNXGfJF7nNnepthp46CAlJoJtC5K/cLu3NgCM3AHu1CkJ5Hzt9V0Y0PBAO6Ay/gGb+w==
   dependencies:
     "@babel/code-frame" "^7.0.0"
     ajv "^6.5.3"
@@ -4066,6 +4075,11 @@ flatten@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/flatten/-/flatten-1.0.2.tgz#dae46a9d78fbe25292258cc1e780a41d95c03782"
   integrity sha1-2uRqnXj74lKSJYzB54CkHZXAN4I=
+
+flow-bin@^0.86.0:
+  version "0.86.0"
+  resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.86.0.tgz#153a28722b4dc13b7200c74b644dd4d9f4969a11"
+  integrity sha512-ulRvFH3ewGIYwg+qPk/OJXoe3Nhqi0RyR0wqgK0b1NzUDEC6O99zU39MBTickXvlrr6iwRO6Wm4lVGeDmnzbew==
 
 flush-write-stream@^1.0.0:
   version "1.0.3"
@@ -4776,6 +4790,11 @@ indexof@0.0.1:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/indexof/-/indexof-0.0.1.tgz#82dc336d232b9062179d05ab3293a66059fd435d"
   integrity sha1-gtwzbSMrkGIXnQWrMpOmYFn9Q10=
+
+indicative@^5.0.8:
+  version "5.0.8"
+  resolved "https://registry.yarnpkg.com/indicative/-/indicative-5.0.8.tgz#e635f6c0838ced1a949bc898e5f8316f6291be1e"
+  integrity sha512-Do9YKlrxyvK6RpMs9AdtxmjhweKrA6hJbJejY81iD8aYjjvOU4HYkJcM2IUxC3S7ZRm/L11u67QT4OQ101N5HQ==
 
 inflation@^2.0.0:
   version "2.0.0"
