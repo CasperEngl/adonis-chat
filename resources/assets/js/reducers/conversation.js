@@ -1,7 +1,12 @@
 import { GET_USERS, CURRENT_CONVERSATION, ALL_CONVERSATIONS } from '../actions/conversation';
 
 const initialState = {
-  users: [],
+  users: [
+    {
+      id: 0,
+      email: '',
+    },
+  ],
   currentConversation: {},
   conversations: [],
 };

@@ -5,7 +5,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-  <title>AdonisJs</title>
+  <title>{{ errorCode }} - Chat App</title>
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,200,300,600,700,900' rel='stylesheet' type='text/css'>
 
@@ -13,11 +13,14 @@
 
 </head>
 
-<body>
+<body class="error">
 
-  <div id="root"></div>
-
-  {{ script('js/app') }}
+  <div class="__banner">
+    <div class="banner__inner">
+      <h1>Error {{ errorCode }}</h1>
+      <p> Something bad happened! <a href="/">Go Back</a> </p>
+    </div>
+  </div>
 
 </body>
 </html>

@@ -36,6 +36,7 @@ class ConversationNew extends PureComponent {
       firstName: PropTypes.string.isRequired,
       lastName: PropTypes.string.isRequired,
     }).isRequired),
+    userId: PropTypes.number.isRequired,
     history: ReactRouterPropTypes.history.isRequired,
     match: ReactRouterPropTypes.match.isRequired,
   }
@@ -43,31 +44,14 @@ class ConversationNew extends PureComponent {
   constructor(props) {
     super(props);
 
-    this.users = [];
-
     this.changeHandler = this.changeHandler.bind(this);
   }
 
-  componentWillMount() {
+  async componentDidMount() {
     const { getUsers, token } = this.props;
 
-    getUsers({ token });
-  }
 
-  componentDidMount() {
-    const { users } = this.props;
-
-    this.users = users.map(user => ({
-      ...user,
-      label: `${user.firstName} ${user.lastName}`,
-      value: user.id,
-    }));
-
-    if (this.users[0] === undefined) {
-      this.users[0] = {
-        label: 'No users found.',
-      };
-    }
+    await getUsers({ token });
   }
 
   changeHandler(option) {
@@ -77,7 +61,9 @@ class ConversationNew extends PureComponent {
   }
 
   render() {
-    const { match, history } = this.props;
+    const {
+      match, history, users, userId,
+    } = this.props;
 
     if (match.params.recipientId) {
       return (
@@ -88,7 +74,7 @@ class ConversationNew extends PureComponent {
       );
     }
 
-    if (!this.users.length) {
+    if (!users.length) {
       return (null);
     }
 
@@ -96,7 +82,13 @@ class ConversationNew extends PureComponent {
       <StyledSelect
         isSearchable
         onChange={this.changeHandler}
-        options={this.users}
+        options={users
+          .filter(user => user.id !== userId)
+          .map(user => ({
+            ...user,
+            label: `${user.firstName} ${user.lastName}`,
+            value: user.id,
+          }))}
       />
     );
   }
@@ -105,6 +97,7 @@ class ConversationNew extends PureComponent {
 const mapStateToProps = state => ({
   token: state.user.tokens.token,
   users: state.conversation.users,
+  userId: state.user.account.id,
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({

@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 import { store } from '../components/App';
+import { checkToken } from './token';
 
 export const REGISTER_USER = 'REGISTER_USER';
 export const LOGIN_USER = 'LOGIN_USER';
@@ -22,18 +23,26 @@ export function userRegister({
         password,
       });
 
-      const json = await axios({
+      const json = await checkToken(axios({
         method: 'POST',
         url: '/api/v1/account/register',
         headers: {
           'Content-Type': 'application/json',
         },
         data,
-      });
+      }));
 
       console.log('User Register', json);
+
+      return {
+        success: Boolean(json.status === 200),
+      };
     } catch (err) {
       console.error(err);
+
+      return {
+        success: false,
+      };
     }
   };
 }
@@ -46,18 +55,18 @@ export function userLogin({ email, password }) {
         password,
       });
 
-      const json = await axios({
+      const json = await checkToken(axios({
         method: 'POST',
         url: '/api/v1/account/login',
         headers: {
           'Content-Type': 'application/json',
         },
         data,
-      });
+      }));
 
       console.log('User login', json);
 
-      if (json.data.success) {
+      if (json.status === 200) {
         const {
           user,
         } = json.data;
@@ -65,7 +74,6 @@ export function userLogin({ email, password }) {
         return dispatch({
           type: LOGIN_USER,
           data: {
-            status: json.data.success,
             user,
           },
         });
@@ -85,7 +93,7 @@ export function userLogout({ token, refreshToken }) {
         refreshToken,
       });
 
-      const json = await axios({
+      const json = await checkToken(axios({
         method: 'POST',
         url: '/api/v1/account/logout',
         headers: {
@@ -93,7 +101,7 @@ export function userLogout({ token, refreshToken }) {
           'Content-Type': 'application/json',
         },
         data,
-      });
+      }));
 
       console.log('User logout', json);
     } catch (err) {
@@ -103,37 +111,5 @@ export function userLogout({ token, refreshToken }) {
     return dispatch({
       type: LOGOUT_USER,
     });
-  };
-}
-
-export function updateTokens({ refreshToken }) {
-  return async function (dispatch) {
-    try {
-      const data = JSON.stringify({
-        refreshToken,
-      });
-
-      const json = await axios({
-        method: 'POST',
-        url: '/api/v1/account/token/',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        data,
-      });
-
-      console.log('Token refresh', json);
-
-      if (json.data.success) {
-        return dispatch({
-          type: UPDATE_TOKENS,
-          data: {
-            ...json.data.user,
-          },
-        });
-      }
-    } catch (err) {
-      console.error(err);
-    }
   };
 }

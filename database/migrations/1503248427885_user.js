@@ -9,6 +9,8 @@ class UserSchema extends Schema {
       table.string('last_name', 60).notNullable();
       table.string('email', 254).notNullable().unique();
       table.string('password', 60).notNullable();
+      table.string('verification_token');
+      table.boolean('is_verified').default(false);
       table.timestamps();
     });
   }

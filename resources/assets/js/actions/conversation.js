@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 import { store } from '../components/App';
-
+import { checkToken } from './token';
 import { LOGOUT_USER } from './user';
 
 export const GET_USERS = 'GET_USERS';
@@ -13,16 +13,16 @@ export function getUsers({ token }) {
     try {
       const { type } = store.getState().user.tokens;
 
-      const json = await axios({
+      const json = await checkToken(axios({
         url: '/api/v1/user/',
         headers: {
           Authorization: `${type} ${token}`,
         },
-      });
+      }));
 
       console.log('Get Users', json);
 
-      if (json.data.success) {
+      if (json.status === 200) {
         const { users } = json.data;
 
         return dispatch({
@@ -47,12 +47,12 @@ export function getUser({ userId, token }) {
     try {
       const { type } = store.getState().user.tokens;
 
-      const json = await axios({
+      const json = await checkToken(axios({
         url: `/api/v1/user/${userId}`,
         headers: {
           Authorization: `${type} ${token}`,
         },
-      });
+      }));
 
       console.log('Get user', json);
     } catch (err) {
@@ -66,16 +66,16 @@ export function getConversation({ conversationId, token }) {
     try {
       const { type } = store.getState().user.tokens;
 
-      const json = await axios({
+      const json = await checkToken(axios({
         url: `/api/v1/conversation/${conversationId}`,
         headers: {
           Authorization: `${type} ${token}`,
         },
-      });
+      }));
 
       console.log('Get Conversation', json);
 
-      if (json.data.success) {
+      if (json.status === 200) {
         const { messages } = json.data;
 
         return dispatch({
@@ -96,16 +96,16 @@ export function getConversations({ token }) {
     try {
       const { type } = store.getState().user.tokens;
 
-      const json = await axios({
+      const json = await checkToken(axios({
         url: '/api/v1/conversation/',
         headers: {
           Authorization: `${type} ${token}`,
         },
-      });
+      }));
 
       console.log('Get user conversations', json);
 
-      if (json.data.success) {
+      if (json.status === 200) {
         const { conversations } = json.data;
 
         return dispatch({
@@ -130,7 +130,7 @@ export function newConversation({ recipientId, message, token }) {
         content: message,
       });
 
-      const json = await axios({
+      const json = await checkToken(axios({
         method: 'POST',
         url: `/api/v1/conversation/new/${recipientId}`,
         headers: {
@@ -138,11 +138,11 @@ export function newConversation({ recipientId, message, token }) {
           'Content-Type': 'application/json',
         },
         data,
-      });
+      }));
 
       console.log('New Conversation', json);
 
-      if (json.data.success) {
+      if (json.status === 200) {
         const { conversationId } = json.data;
 
         return conversationId;
@@ -162,7 +162,7 @@ export function sendReply({ conversationId, message, token }) {
         content: message,
       });
 
-      const json = await axios({
+      const json = await checkToken(axios({
         method: 'POST',
         url: `/api/v1/conversation/${conversationId}`,
         headers: {
@@ -170,11 +170,11 @@ export function sendReply({ conversationId, message, token }) {
           'Content-Type': 'application/json',
         },
         data,
-      });
+      }));
 
       console.log(json);
 
-      if (json.data.success) {
+      if (json.status === 200) {
         return true;
       }
     } catch (err) {

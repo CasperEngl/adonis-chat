@@ -5,7 +5,7 @@ const Encryption = use('Encryption');
 const status = use('./status');
 
 class LogoutController {
-  async index({ request }) {
+  async index({ request, response }) {
     try {
       const { refreshToken } = request.only(['refreshToken']);
 
@@ -16,6 +16,8 @@ class LogoutController {
 
       await dbRefreshToken.save();
 
+      response.status(200);
+
       return {
         success: true,
         message: 'You are now logged out',
@@ -23,9 +25,11 @@ class LogoutController {
     } catch (err) {
       console.error(err);
 
+      response.status(401);
+
       return {
         success: false,
-        message: status.serverError,
+        message: status.unauthorized,
       };
     }
   }

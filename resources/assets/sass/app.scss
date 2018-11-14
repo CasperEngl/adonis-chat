@@ -8,7 +8,9 @@ $top_skin_tone: 20px;
 $top_magnifier: 18px;
 
 @import '~emoji-picker-react/dist/universal/style.scss';
-// /Emoji Picker
+// //Emoji Picker
+
+@import 'components/error';
 
 $content-margin: 56px;
 $content-padding: 1rem #{$grid-gutter-width / 2};

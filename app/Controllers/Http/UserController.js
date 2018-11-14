@@ -3,7 +3,7 @@ const User = use('App/Models/User');
 const status = use('./status');
 
 class UserController {
-  async index() {
+  async index({ response }) {
     try {
       let users = await User.all();
 
@@ -14,12 +14,16 @@ class UserController {
         lastName: user.last_name,
       }));
 
+      response.status(200);
+
       return {
         success: true,
         users,
       };
     } catch (err) {
       console.error(err);
+
+      response.status(401);
 
       return {
         success: false,

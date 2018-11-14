@@ -1,0 +1,6 @@
+<h2>Hello, {{ user.first_name }}</h2>
+
+<small>Rememeber, your email is {{ user.email }}</small>
+
+<h3>Verify your account by clicking the following link</h3>
+<a href="http://localhost:3333/api/v1/account/token/verify-email/{{ user.verification_token }}">http://localhost:3333/api/v1/account/token/verify-email/{{ user.verification_token }}</a>

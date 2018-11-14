@@ -7,10 +7,11 @@ import { Container } from 'reactstrap';
 
 import ChatSidebar from '../ChatSidebar';
 import Header from '../Header';
+import ProtectedRoute from '../ProtectedRoute';
+
 import Conversation from '../Conversation';
 import ConversationNew from '../ConversationNew';
 import Home from '../Home';
-import ProtectedRoute from '../ProtectedRoute';
 import SignIn from '../SignIn';
 import SignUp from '../SignUp';
 import Users from '../Users';
@@ -26,23 +27,46 @@ class ChatApp extends PureComponent {
     isAuthenticated: PropTypes.bool.isRequired,
   }
 
-  componentWillMount() {
-    const { closeNav } = this.props;
+  constructor(props) {
+    super(props);
 
-    closeNav();
+    // this.checkTokenInterval = ms('1 seconds');
   }
 
   componentDidMount() {
     const {
+      closeNav,
       getConversations,
       token,
     } = this.props;
 
-    if (!token) {
-      return;
-    }
+    // this.tokenInterval = setInterval(() => {
+    //   const {
+    //     isAuthenticated,
+    //     refreshToken,
+    //     tokenCreatedAt,
+    //   } = this.props;
 
-    getConversations({ token });
+    //   const tokenShouldRefresh = new Date(tokenCreatedAt).getTime() + ms('1 minute');
+    //   const currentTime = new Date(new Date().toISOString()).getTime();
+
+    //   const shouldTokenRefresh = tokenShouldRefresh < currentTime;
+
+    //   // console.log('When the token should refresh', new Date(tokenShouldRefresh));
+    //   // console.log('Current time to check refresh', new Date(currentTime));
+    //   // console.log('Should we refresh?', shouldTokenRefresh);
+
+    //   if (isAuthenticated && shouldTokenRefresh) {
+    //     // updateTokens({ refreshToken });
+    //   }
+    // }, this.checkTokenInterval);
+
+    closeNav();
+    // getConversations({ token });
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.tokenInterval);
   }
 
   render() {

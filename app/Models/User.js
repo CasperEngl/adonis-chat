@@ -32,6 +32,21 @@ class User extends Model {
   tokens() {
     return this.hasMany('App/Models/Token');
   }
+
+  /**
+   * Return the users conversations
+   *
+   * @method conversations
+   *
+   * @return {Object}
+   */
+  conversations() {
+    return this.belongsToMany('App/Models/Conversation').pivotTable('conversation_user', 'conversation_id', 'user_id');
+  }
+
+  messages() {
+    return this.hasMany('App/Models/Message');
+  }
 }
 
 module.exports = User;

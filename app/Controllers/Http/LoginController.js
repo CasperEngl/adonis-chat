@@ -3,7 +3,7 @@ const User = use('App/Models/User');
 const status = use('./status');
 
 class LoginController {
-  async index({ request, auth }) {
+  async index({ request, auth, response }) {
     try {
       const { email, password } = request.only(['email', 'password']);
 
@@ -11,12 +11,12 @@ class LoginController {
         .withRefreshToken()
         .attempt(email, password);
 
-      const {
-        id,
-        email: userEmail,
-        first_name: firstName,
-        last_name: lastName,
-      } = await User.findBy('email', email);
+      const user = await User.query()
+        .where('email', email)
+        .where('is_verified', true)
+        .first();
+
+      response.status(200);
 
       return {
         success: true,
@@ -28,19 +28,21 @@ class LoginController {
             createdAt: new Date().toISOString(),
           },
           account: {
-            id,
-            email: userEmail,
-            firstName,
-            lastName,
+            id: user.id,
+            email: user.email,
+            firstName: user.first_name,
+            lastName: user.last_name,
           },
         },
       };
     } catch (err) {
       console.error(err);
 
+      response.status(401);
+
       return {
         success: false,
-        message: status.serverError,
+        message: status.unauthorized,
       };
     }
   }

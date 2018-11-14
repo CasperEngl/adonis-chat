@@ -27,7 +27,7 @@ export default (state = initialState, action) => {
     case LOGIN_USER:
       return {
         ...state,
-        isAuthenticated: true,
+        isAuthenticated: Boolean(data.user.tokens.createdAt),
         tokens: data.user.tokens,
         account: data.user.account,
       };
@@ -41,7 +41,7 @@ export default (state = initialState, action) => {
     case UPDATE_TOKENS:
       return {
         ...state,
-        tokens: data.tokens,
+        tokens: data.user.tokens,
       };
 
     default:

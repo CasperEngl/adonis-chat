@@ -1,13 +1,15 @@
-import * as React from 'react';
+import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { Link, Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import validator from 'validator';
+import capitalize from 'capitalize';
 import {
   Button,
   Card,
   CardBody,
-  CardText,
   CardTitle,
+  CardText,
   FormGroup,
   Input,
   Label,
@@ -16,7 +18,7 @@ import { bindActionCreators } from 'redux';
 
 import { userRegister } from '../../actions/user';
 
-class SignUp extends React.PureComponent {
+class SignUp extends PureComponent {
   static propTypes = {
     userRegister: PropTypes.func.isRequired,
     isAuthenticated: PropTypes.bool.isRequired,
@@ -27,11 +29,12 @@ class SignUp extends React.PureComponent {
 
     this.state = {
       email: 'me@casperengelmann.com',
-      error: '',
       firstName: 'Casper',
       lastName: 'Engelmann',
-      loggedIn: false,
       password: '1234567890',
+      error: false,
+      errorField: '',
+      registered: false,
     };
 
     this.changeFirstName = this.changeFirstName.bind(this);
@@ -51,39 +54,86 @@ class SignUp extends React.PureComponent {
       password,
     } = this.state;
 
-    await userRegister({
-      email,
+    if (!validator.isEmail(email)) {
+      return this.setState({
+        error: 'I think you\'ve made an error. Check your email address to see that it was entered correctly.',
+        errorField: 'email',
+      });
+    }
+
+    if (!validator.isAlpha(firstName)) {
+      return this.setState({
+        error: 'Your name cannot contain any numerics.',
+        errorField: 'firstName',
+      });
+    }
+
+    if (!validator.isAlpha(lastName)) {
+      return this.setState({
+        error: 'Your last name should not have any numerics in it.',
+        errorField: 'lastName',
+      });
+    }
+
+    if (!validator.isLength(password, {
+      min: 8,
+      max: 100,
+    })) {
+      return this.setState({
+        error: 'Make sure that your password is at least 8 characters long',
+        errorField: 'password',
+      });
+    }
+
+    const json = await userRegister({
+      email: validator.normalizeEmail(email),
       firstName,
       lastName,
       password,
     });
 
     this.setState({
-      loggedIn: true,
+      registered: json.success,
     });
   }
 
   changeFirstName(event) {
+    const { value } = event.target;
+
+    if (value.length && !validator.isAlpha(value) && !value.includes('-') || value.includes('--')) {
+      return;
+    }
+
     this.setState({
-      firstName: event.target.value,
+      firstName: capitalize(value),
     });
   }
 
   changeLastName(event) {
+    const { value } = event.target;
+
+    if (value.length &&!validator.isAlpha(value)) {
+      return;
+    }
+
     this.setState({
-      lastName: event.target.value,
+      lastName: capitalize(value),
     });
   }
 
   changeEmail(event) {
+    const { value } = event.target;
+
     this.setState({
       email: event.target.value,
     });
   }
 
   changePassword(event) {
+    const { value } = event.target;
+
     this.setState({
-      password: event.target.value,
+      password: value,
     });
   }
 
@@ -91,16 +141,18 @@ class SignUp extends React.PureComponent {
     const {
       isAuthenticated,
     } = this.props;
+
     const {
       firstName,
       lastName,
       email,
       password,
       error,
-      loggedIn,
+      errorField,
+      registered,
     } = this.state;
 
-    if (isAuthenticated || loggedIn) {
+    if (isAuthenticated || registered) {
       return (
         <Redirect to={{
           pathname: '/signin',
@@ -115,7 +167,6 @@ class SignUp extends React.PureComponent {
     return (
       <Card>
         <CardBody>
-          {error ? <CardText>{error}</CardText> : null}
           <CardTitle>Sign up</CardTitle>
           <FormGroup>
             <Label for="firstName">First Name</Label>
@@ -126,6 +177,7 @@ class SignUp extends React.PureComponent {
               value={firstName}
               onChange={this.changeFirstName}
             />
+            { error && errorField === 'firstName' && <CardText className="text-danger">{ error }</CardText> }
           </FormGroup>
           <FormGroup>
             <Label for="lastName">Last Name</Label>
@@ -136,6 +188,7 @@ class SignUp extends React.PureComponent {
               value={lastName}
               onChange={this.changeLastName}
             />
+            { error && errorField === 'lastName' && <CardText className="text-danger">{ error }</CardText> }
           </FormGroup>
           <FormGroup>
             <Label for="email">Email</Label>
@@ -146,6 +199,7 @@ class SignUp extends React.PureComponent {
               value={email}
               onChange={this.changeEmail}
             />
+            { error && errorField === 'email' && <CardText className="text-danger">{ error }</CardText> }
           </FormGroup>
           <FormGroup>
             <Label for="password">Password</Label>
@@ -156,6 +210,7 @@ class SignUp extends React.PureComponent {
               value={password}
               onChange={this.changePassword}
             />
+            { error && errorField === 'password' && <CardText className="text-danger">{ error }</CardText> }
           </FormGroup>
           <Button color="primary" onClick={this.onSignUp}>Sign Up</Button>
           <Button tag={Link} to="/signin" color="link">Sign In</Button>
