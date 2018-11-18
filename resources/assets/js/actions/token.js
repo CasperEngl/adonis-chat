@@ -5,30 +5,6 @@ import { store } from '../components/App';
 
 import { UPDATE_TOKENS } from './user';
 
-export function checkToken(cb) {
-  return new Promise((resolve) => {
-    const {
-      refreshToken,
-      createdAt,
-    } = store.getState().user.tokens;
-
-    const tokenShouldRefresh = new Date(createdAt).getTime() + ms('10 minutes');
-    const currentTime = new Date(new Date().toISOString()).getTime();
-
-    const shouldTokenRefresh = tokenShouldRefresh < currentTime;
-
-    // console.log('When the token should refresh', new Date(tokenShouldRefresh));
-    // console.log('Current time to check refresh', new Date(currentTime));
-    // console.log('Should we refresh?', shouldTokenRefresh);
-
-    if (shouldTokenRefresh) {
-      store.dispatch(updateTokens({ refreshToken }));
-    }
-
-    resolve(cb);
-  });
-}
-
 export function updateTokens({ refreshToken }) {
   return async function (dispatch) {
     try {
@@ -61,4 +37,29 @@ export function updateTokens({ refreshToken }) {
       console.error(err);
     }
   };
+}
+
+
+export function checkToken(cb) {
+  return new Promise((resolve) => {
+    const {
+      refreshToken,
+      createdAt,
+    } = store.getState().user.tokens;
+
+    const tokenShouldRefresh = new Date(createdAt).getTime() + ms('10 minutes');
+    const currentTime = new Date(new Date().toISOString()).getTime();
+
+    const shouldTokenRefresh = tokenShouldRefresh < currentTime;
+
+    // console.log('When the token should refresh', new Date(tokenShouldRefresh));
+    // console.log('Current time to check refresh', new Date(currentTime));
+    // console.log('Should we refresh?', shouldTokenRefresh);
+
+    if (shouldTokenRefresh) {
+      store.dispatch(updateTokens({ refreshToken }));
+    }
+
+    resolve(cb);
+  });
 }
