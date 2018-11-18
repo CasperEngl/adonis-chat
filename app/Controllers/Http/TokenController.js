@@ -11,7 +11,6 @@ class TokenController {
         .newRefreshToken()
         .generateForRefreshToken(refreshToken);
 
-
       response.status(200);
 
       return {

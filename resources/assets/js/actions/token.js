@@ -1,6 +1,9 @@
+import axios from 'axios';
 import ms from 'ms';
 
 import { store } from '../components/App';
+
+import { UPDATE_TOKENS } from './user';
 
 export function checkToken(cb) {
   return new Promise((resolve) => {

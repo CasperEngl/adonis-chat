@@ -1,59 +1,90 @@
 const Message = use('App/Models/Message');
 const Conversation = use('App/Models/Conversation');
 
-// Route.get('conversation', 'UserController.index').as('conversation.index')
-// Route.post('conversation', 'UserController.store').as('conversation.store')
-// Route.get('conversation/create', 'UserController.create').as('conversation.create')
-// Route.get('conversation/:id', 'UserController.show').as('conversation.show')
-// Route.put('conversation/:id', 'UserController.update').as('conversation.update')
-// Route.patch('conversation/:id', 'UserController.update')
-// Route.get('conversation/:id/edit', 'UserController.edit').as('conversation.edit')
-// Route.delete('conversation/:id', 'UserController.destroy').as('conversation.destroy')
+// Route.get('conversation', 'ConversationController.index').as('conversation.index')
+// Route.post('conversation', 'ConversationController.store').as('conversation.store')
+// Route.get('conversation/:id', 'ConversationController.show').as('conversation.show')
+// Route.put('conversation/:id', 'ConversationController.update').as('conversation.update')
+// Route.patch('conversation/:id', 'ConversationController.update')
+// Route.delete('conversation/:id', 'ConversationController.destroy').as('conversation.destroy')
 
 class ConversationController {
-  async index() {
+  async index({ auth, response }) {
     try {
-      const conversations = await Conversation.all();
+      const user = await auth.getUser();
 
-      const formatted = await Promise.all(conversations.toJSON().map(async (conversation) => {
-        const message = await Message.query()
-          .where('conversation_id', conversation.id)
-          .last();
+      let conversations = await user.conversations().fetch();
+      const conversationsJSON = await conversations.toJSON();
 
-        if (message) {
-          return {
-            conversation,
-            message: message.toJSON(),
-          };
-        }
+      console.log(new Date());
+
+      conversations = await Promise.all(conversationsJSON.map(async (conversation) => {
+        const finder = await Conversation.find(conversation.id);
+        const message = await finder.messages().last();
 
         return {
-          conversation,
+          id: conversation.id,
+          createdAt: conversation.created_at,
+          updatedAt: conversation.updated_at,
+          message: message ? await message.toJSON() : null,
         };
       }));
 
       return {
-        conversations: formatted,
+        conversations,
       };
     } catch (err) {
       console.error(err);
     }
   }
 
-  async create({ response, auth }) {
+  async store({ response, auth }) { // LAV NY SAMTALE
     try {
       const user = await auth.getUser();
       const conversation = await Conversation.create();
 
-      await user.conversations().attach([conversation.id]);
+      await user.conversations().attach(conversation);
 
       response.status(200);
 
       return {
-
+        message: `Conversation ${conversation.id} created`,
       };
     } catch (err) {
       console.error(err);
+
+      response.status(401);
+    }
+  }
+
+  async update({
+    auth, params, request, response,
+  }) { // SEND BESKED TIL SAMTALE (opdater med ny besked)
+    try {
+      const { id } = params;
+      const user = await auth.getUser();
+      const conversation = await Conversation.find(id);
+
+      const { content } = request.only(['content']);
+
+      await conversation.messages().create({
+        conversation_id: id,
+        user_id: user.id,
+        content,
+      });
+
+      const messages = await conversation.messages().fetch();
+
+      response.status(200);
+
+      return {
+        conversation,
+        messages,
+      };
+    } catch (err) {
+      console.error(err);
+
+      response.status(401);
     }
   }
 

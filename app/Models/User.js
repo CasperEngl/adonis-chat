@@ -45,7 +45,7 @@ class User extends Model {
   }
 
   messages() {
-    return this.hasMany('App/Models/Message');
+    return this.hasMany('App/Models/Message', 'id', 'user_id');
   }
 }
 

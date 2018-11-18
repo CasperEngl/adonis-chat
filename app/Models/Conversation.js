@@ -25,7 +25,6 @@ class Conversation extends Model {
    * @return {Object}
    */
   messages() {
-    console.log(this.hasMany('App/Models/Message'));
     return this.hasMany('App/Models/Message');
   }
 

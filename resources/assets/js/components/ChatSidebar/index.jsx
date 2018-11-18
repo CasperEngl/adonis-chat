@@ -67,6 +67,8 @@ class ChatSidebar extends Component {
       conversations,
     } = this.props;
 
+    console.log(conversations);
+
     return (
       <Sidebar
         open={navOpen}
@@ -90,13 +92,15 @@ class ChatSidebar extends Component {
                   New Conversation
                 </NavLink>
                 {
-                  conversations.map(conversation => (
-                    <NavLink key={conversation.id} tag={RRNavLink} to={`/conversation/${conversation.id}`} onClick={closeNav}>
-                      {
-                        conversation.participants.map(participant => `${participant.firstName} ${participant.lastName} `)
-                      }
-                    </NavLink>
-                  ))
+                  conversations
+                    .sort(conversation => new Date(conversation.updatedAt).getTime() - new Date().getTime())
+                    .map(conversation => (
+                      <NavLink key={conversation.id} tag={RRNavLink} to={`/conversation/${conversation.id}`} onClick={closeNav}>
+                        {
+                          conversation.id
+                        }
+                      </NavLink>
+                    ))
                 }
               </NavItem>
             </Nav>

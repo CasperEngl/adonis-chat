@@ -14,11 +14,11 @@
 /** @type {typeof import('@adonisjs/framework/src/Route/Manager')} */
 const Route = use('Route');
 
-Route.resource('api/v1/user', 'UserController');
+Route.resource('api/v1/user', 'UserController').apiOnly();
 
-Route.resource('api/v1/conversation', 'ConversationController');
+Route.resource('api/v1/conversation', 'ConversationController').apiOnly();
 
-Route.resource('api/v1/message', 'MessageController');
+Route.resource('api/v1/message', 'MessageController').apiOnly();
 
 Route.group(() => {
   Route.post('login', 'LoginController.index').validator('Login');

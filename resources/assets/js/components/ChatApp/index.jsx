@@ -16,21 +16,16 @@ import SignIn from '../SignIn';
 import SignUp from '../SignUp';
 import Users from '../Users';
 
-import { getConversations } from '../../actions/conversation';
+import { getConversations, sendReply } from '../../actions/conversation';
 import { closeNav } from '../../actions/ui';
 
 class ChatApp extends PureComponent {
   static propTypes = {
     closeNav: PropTypes.func.isRequired,
     getConversations: PropTypes.func.isRequired,
+    sendReply: PropTypes.func.isRequired,
     token: PropTypes.string.isRequired,
     isAuthenticated: PropTypes.bool.isRequired,
-  }
-
-  constructor(props) {
-    super(props);
-
-    // this.checkTokenInterval = ms('1 seconds');
   }
 
   componentDidMount() {
@@ -38,31 +33,17 @@ class ChatApp extends PureComponent {
       closeNav,
       getConversations,
       token,
+      sendReply,
     } = this.props;
 
-    // this.tokenInterval = setInterval(() => {
-    //   const {
-    //     isAuthenticated,
-    //     refreshToken,
-    //     tokenCreatedAt,
-    //   } = this.props;
-
-    //   const tokenShouldRefresh = new Date(tokenCreatedAt).getTime() + ms('1 minute');
-    //   const currentTime = new Date(new Date().toISOString()).getTime();
-
-    //   const shouldTokenRefresh = tokenShouldRefresh < currentTime;
-
-    //   // console.log('When the token should refresh', new Date(tokenShouldRefresh));
-    //   // console.log('Current time to check refresh', new Date(currentTime));
-    //   // console.log('Should we refresh?', shouldTokenRefresh);
-
-    //   if (isAuthenticated && shouldTokenRefresh) {
-    //     // updateTokens({ refreshToken });
-    //   }
-    // }, this.checkTokenInterval);
+    // sendReply({
+    //   conversationId: 4,
+    //   message: 'lell',
+    //   token,
+    // });
 
     closeNav();
-    // getConversations({ token });
+    getConversations({ token });
   }
 
   componentWillUnmount() {
@@ -101,6 +82,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => bindActionCreators({
   getConversations,
   closeNav,
+  sendReply,
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(ChatApp);

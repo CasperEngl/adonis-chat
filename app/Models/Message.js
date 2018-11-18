@@ -6,8 +6,8 @@ class Message extends Model {
     super.boot();
   }
 
-  owner() {
-    this.hasOne('User', 'user_id');
+  user() {
+    this.hasOne('App/Models/User', 'id', 'user_id');
   }
 }
 

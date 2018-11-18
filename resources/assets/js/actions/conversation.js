@@ -132,7 +132,7 @@ export function newConversation({ recipientId, message, token }) {
 
       const json = await checkToken(axios({
         method: 'POST',
-        url: `/api/v1/conversation/new/${recipientId}`,
+        url: `/api/v1/conversation/${recipientId}`,
         headers: {
           Authorization: `${type} ${token}`,
           'Content-Type': 'application/json',
@@ -163,7 +163,7 @@ export function sendReply({ conversationId, message, token }) {
       });
 
       const json = await checkToken(axios({
-        method: 'POST',
+        method: 'PUT',
         url: `/api/v1/conversation/${conversationId}`,
         headers: {
           Authorization: `${type} ${token}`,
@@ -172,7 +172,7 @@ export function sendReply({ conversationId, message, token }) {
         data,
       }));
 
-      console.log(json);
+      console.log('Send reply', json);
 
       if (json.status === 200) {
         return true;
