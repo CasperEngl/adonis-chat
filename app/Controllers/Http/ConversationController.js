@@ -21,7 +21,9 @@ class ConversationController {
         const users = await finder.users().fetch();
 
         return {
-          conversation,
+          id: conversation.id,
+          createdAt: conversation.created_at,
+          updatedAt: conversation.updated_at,
           message: message ? await message.toJSON() : null,
           users,
         };
