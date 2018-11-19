@@ -22,14 +22,13 @@ class Conversation extends PureComponent {
     token: PropTypes.string.isRequired,
     messages: PropTypes.arrayOf(PropTypes.shape({
       id: PropTypes.number.isRequired,
+      conversation_id: PropTypes.number.isRequired,
+      user_id: PropTypes.number.isRequired,
       content: PropTypes.string.isRequired,
-      author: PropTypes.shape({
-        id: PropTypes.number.isRequired,
-        firstName: PropTypes.string.isRequired,
-        lastName: PropTypes.string.isRequired,
-      }).isRequired,
-      createdAt: PropTypes.string.isRequired,
-      updatedAt: PropTypes.string.isRequired,
+      is_deleted: PropTypes.bool.isRequired,
+      new: PropTypes.bool.isRequired,
+      created_at: PropTypes.string.isRequired,
+      updated_at: PropTypes.string.isRequired,
     })),
   }
 
@@ -53,7 +52,7 @@ class Conversation extends PureComponent {
 
     messages = messages.map(message => ({
       ...message,
-      sender: message.author.id === userId,
+      sender: message.user_id === userId,
     }));
 
     return (
@@ -65,8 +64,8 @@ class Conversation extends PureComponent {
               id={message.id}
               content={message.content}
               sender={message.sender}
-              createdAt={message.createdAt}
-              updatedAt={message.updatedAt}
+              createdAt={message.created_at}
+              updatedAt={message.updated_at}
             />
           ))
         }
