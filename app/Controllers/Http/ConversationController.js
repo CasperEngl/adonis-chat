@@ -16,8 +16,6 @@ class ConversationController {
       let conversations = await user.conversations().fetch();
       const conversationsJSON = await conversations.toJSON();
 
-      console.log(new Date());
-
       conversations = await Promise.all(conversationsJSON.map(async (conversation) => {
         const finder = await Conversation.find(conversation.id);
         const message = await finder.messages().last();
@@ -88,14 +86,20 @@ class ConversationController {
     }
   }
 
-  async show({ params }) {
-    const conversation = await Conversation.find(params.id);
-    const messages = await conversation.messages().fetch();
+  async show({ params, response }) {
+    try {
+      const conversation = await Conversation.find(params.id);
+      const messages = await conversation.messages().fetch();
 
-    return {
-      conversation,
-      messages,
-    };
+      return {
+        conversation,
+        messages,
+      };
+    } catch (err) {
+      console.error(err);
+
+      return response.status(400);
+    }
   }
 }
 
