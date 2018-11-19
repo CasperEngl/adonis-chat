@@ -75,8 +75,8 @@ class Message extends PureComponent {
 
     return (
       <Row className="my-2 align-items-center">
-        <Col sm="auto" className="pr-0">
-          <img src="/avatar.png" alt="avatar" height="40" className="conversation__avatar" />
+        <Col tag="figure" sm="auto" className="pr-0">
+          <img src="/img/avatar.png" alt="avatar" height="40" className="conversation__avatar" />
         </Col>
         <Col sm="8">
           <StyledCard body id={`message_${id}`}>
