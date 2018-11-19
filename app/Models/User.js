@@ -20,6 +20,15 @@ class User extends Model {
   }
 
   /**
+   * Hidden fields when retrieving the user
+   *
+   * @return {array}
+   */
+  static get hidden() {
+    return ['password', 'is_verified'];
+  }
+
+  /**
    * A relationship on tokens is required for auth to
    * work. Since features like `refreshTokens` or
    * `rememberToken` will be saved inside the
