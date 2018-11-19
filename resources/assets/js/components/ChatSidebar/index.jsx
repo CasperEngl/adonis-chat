@@ -31,6 +31,26 @@ class ChatSidebar extends Component {
     refreshToken: PropTypes.string.isRequired,
     conversations: PropTypes.arrayOf(PropTypes.shape({
       id: PropTypes.number.isRequired,
+      createdAt: PropTypes.string.isRequired,
+      updatedAt: PropTypes.string.isRequired,
+      message: PropTypes.shape({
+        id: PropTypes.number.isRequired,
+        conversation_id: PropTypes.number.isRequired,
+        user_id: PropTypes.number.isRequired,
+        content: PropTypes.string.isRequired,
+        seen: PropTypes.bool.isRequired,
+        is_deleted: PropTypes.bool.isRequired,
+        created_at: PropTypes.string.isRequired,
+        updated_at: PropTypes.string.isRequired,
+      }),
+      users: PropTypes.arrayOf(PropTypes.shape({
+        id: PropTypes.number.isRequired,
+        first_name: PropTypes.string.isRequired,
+        last_name: PropTypes.string.isRequired,
+        email: PropTypes.string.isRequired,
+        created_at: PropTypes.string.isRequired,
+        updated_at: PropTypes.string.isRequired,
+      })),
     })).isRequired,
   }
 
@@ -91,11 +111,17 @@ class ChatSidebar extends Component {
                 </NavLink>
                 {
                   conversations
-                    .sort(conversation => new Date(conversation.updatedAt).getTime() - new Date().getTime())
+                    .sort(conversation => (
+                      new Date(conversation.updatedAt).getTime() - new Date().getTime()
+                    ))
                     .map(conversation => (
                       <NavLink key={conversation.id} tag={RRNavLink} to={`/conversation/${conversation.id}`} onClick={closeNav}>
                         {
-                          conversation.id
+                          conversation.users.map(user => (
+                            <Fragment key={user.id}>
+                              {`${user.first_name} `}
+                            </Fragment>
+                          ))
                         }
                       </NavLink>
                     ))
