@@ -12,6 +12,7 @@ class ConversationSchema extends Schema {
       table.increments('id');
       table.integer('conversation_id').unsigned().references('id').inTable('conversations');
       table.integer('user_id').unsigned().references('id').inTable('users');
+      table.string('name');
       table.timestamps();
     });
   }
