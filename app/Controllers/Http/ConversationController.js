@@ -1,4 +1,3 @@
-const Message = use('App/Models/Message');
 const Conversation = use('App/Models/Conversation');
 
 // Route.get('conversation', 'ConversationController.index').as('conversation.index')
@@ -19,14 +18,16 @@ class ConversationController {
       conversations = await Promise.all(conversationsJSON.map(async (conversation) => {
         const finder = await Conversation.find(conversation.id);
         const message = await finder.messages().last();
+        const users = await finder.users().fetch();
 
         return {
-          id: conversation.id,
-          createdAt: conversation.created_at,
-          updatedAt: conversation.updated_at,
+          conversation,
           message: message ? await message.toJSON() : null,
+          users,
         };
       }));
+
+      response.status(200);
 
       return {
         conversations,
@@ -36,17 +37,19 @@ class ConversationController {
     }
   }
 
-  async store({ response, auth }) { // LAV NY SAMTALE
+  async store({ request, response, auth }) { // LAV NY SAMTALE
     try {
+      const { id } = request.only(['id']);
+
       const user = await auth.getUser();
       const conversation = await Conversation.create();
 
-      await user.conversations().attach(conversation);
+      await conversation.users().attach([id, user.id]);
 
       response.status(200);
 
       return {
-        message: `Conversation ${conversation.id} created`,
+        id: conversation.id,
       };
     } catch (err) {
       console.error(err);
@@ -90,10 +93,12 @@ class ConversationController {
     try {
       const conversation = await Conversation.find(params.id);
       const messages = await conversation.messages().fetch();
+      const users = await conversation.users().fetch();
 
       return {
         conversation,
         messages,
+        users,
       };
     } catch (err) {
       console.error(err);
