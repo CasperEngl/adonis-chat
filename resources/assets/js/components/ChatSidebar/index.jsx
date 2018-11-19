@@ -67,8 +67,6 @@ class ChatSidebar extends Component {
       conversations,
     } = this.props;
 
-    console.log(conversations);
-
     return (
       <Sidebar
         open={navOpen}
