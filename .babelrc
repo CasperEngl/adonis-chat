@@ -1,5 +1,5 @@
 {
-  "plugins": ["babel-plugin-transform-class-properties"],
+  "plugins": ["babel-plugin-transform-class-properties", "transform-regenerator"],
   "presets": ["react", "flow"],
   "retainLines": true
 }
