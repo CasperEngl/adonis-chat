@@ -25,7 +25,7 @@ class User extends Model {
    * @return {array}
    */
   static get hidden() {
-    return ['password', 'is_verified'];
+    return ['password'];
   }
 
   /**
