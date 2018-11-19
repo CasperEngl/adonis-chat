@@ -34,10 +34,10 @@ class Conversation extends Model {
    *
    * @return integer
    */
-  new(userId = 0) {
+  seen(userId = 0) {
     return this
       .messages
-      .where('new', true)
+      .where('seen', true)
       .where('user_id', '!=', userId)
       .count();
   }

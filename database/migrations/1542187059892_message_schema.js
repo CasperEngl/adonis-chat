@@ -8,7 +8,7 @@ class MessageSchema extends Schema {
       table.integer('conversation_id').notNullable();
       table.integer('user_id').notNullable();
       table.text('content').notNullable();
-      table.boolean('new').default(true);
+      table.boolean('seen').default(true);
       table.boolean('is_deleted').default(false);
       table.timestamps();
     });
