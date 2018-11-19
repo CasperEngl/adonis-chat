@@ -1,9 +1,24 @@
 const mix = require('laravel-mix');
+const ImageminPlugin = require('imagemin-webpack-plugin').default;
+const imageminMozjpeg = require('imagemin-mozjpeg');
 
 mix
   .react('resources/assets/js/index.jsx', 'public/js/app.js')
   .sass('resources/assets/sass/app.scss', 'public/style/app.css')
   .copyDirectory('resources/assets/img', 'public/img');
+
+mix.webpackConfig({
+  plugins: [
+    new ImageminPlugin({
+      test: /\.(jpe?g|png|gif|svg)$/i,
+      plugins: [
+        imageminMozjpeg({
+          quality: 50,
+        }),
+      ],
+    }),
+  ],
+});
 
 if (mix.inProduction()) {
   mix.version();

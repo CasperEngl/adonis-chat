@@ -1,5 +1,3 @@
-'use strict'
-
 /*
 |--------------------------------------------------------------------------
 | Http server
@@ -17,9 +15,26 @@
 |     Make sure to pass relative path from the project root.
 */
 
-const { Ignitor } = require('@adonisjs/ignitor')
+const cluster = require('cluster');
+const clusterPubSub = require('@adonisjs/websocket/clusterPubSub');
+const os = require('os');
 
-new Ignitor(require('@adonisjs/fold'))
+const numCPUs = os.cpus().length;
+
+if (cluster.isMaster) {
+  for (let i = 0; i < numCPUs; i++) { // eslint-disable-line
+    cluster.fork();
+  }
+
+  clusterPubSub();
+  return;
+}
+
+const { Ignitor } = require('@adonisjs/ignitor');
+const fold = require('@adonisjs/fold');
+
+new Ignitor(fold)
   .appRoot(__dirname)
+  .wsServer()
   .fireHttpServer()
-  .catch(console.error)
+  .catch(console.error);
