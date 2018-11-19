@@ -19,7 +19,7 @@ const cluster = require('cluster');
 const clusterPubSub = require('@adonisjs/websocket/clusterPubSub');
 const os = require('os');
 
-const numCPUs = os.cpus().length;
+const numCPUs = os.cpus().length / 2;
 
 if (cluster.isMaster) {
   for (let i = 0; i < numCPUs; i++) { // eslint-disable-line
