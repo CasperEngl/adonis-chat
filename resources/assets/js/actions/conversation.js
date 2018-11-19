@@ -76,12 +76,10 @@ export function getConversation({ conversationId, token }) {
       console.log('Get Conversation', json);
 
       if (json.status === 200) {
-        const { messages } = json.data;
-
         return dispatch({
           type: CURRENT_CONVERSATION,
           data: {
-            messages,
+            ...json.data,
           },
         });
       }
@@ -121,18 +119,19 @@ export function getConversations({ token }) {
   };
 }
 
-export function newConversation({ recipientId, message, token }) {
+export function newConversation({ id, token }) {
   return async function () {
     try {
+      console.log('running new conversation', id, token);
       const { type } = store.getState().user.tokens;
 
       const data = JSON.stringify({
-        content: message,
+        id,
       });
 
       const json = await checkToken(axios({
         method: 'POST',
-        url: `/api/v1/conversation/${recipientId}`,
+        url: '/api/v1/conversation',
         headers: {
           Authorization: `${type} ${token}`,
           'Content-Type': 'application/json',
@@ -143,9 +142,9 @@ export function newConversation({ recipientId, message, token }) {
       console.log('New Conversation', json);
 
       if (json.status === 200) {
-        const { conversationId } = json.data;
+        const { id } = json.data;
 
-        return conversationId;
+        return id;
       }
     } catch (err) {
       console.error(err);
