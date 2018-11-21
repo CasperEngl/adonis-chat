@@ -12,12 +12,6 @@ import { library } from '@fortawesome/fontawesome-svg-core';
 import { faSmileBeam, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import {
-  getConversation,
-  newConversation,
-  sendReply,
-} from '../../actions/conversation';
-
 library.add(faSmileBeam);
 library.add(faPaperPlane);
 
@@ -107,7 +101,7 @@ class ConversationInput extends Component {
     window.scrollTo(0, document.body.scrollHeight);
   }
 
-  async send() {
+  send() {
     const { value } = this.state;
 
     if (value.length < 1) {
@@ -126,7 +120,7 @@ class ConversationInput extends Component {
   addEmoji(code, data) {
     const emoji = new EmojiConvertor();
     const { value } = this.state;
-    console.log(code, data);
+    
     const emote = emoji.replace_colons(`:${data.name}:`);
 
     this.setState({
@@ -163,13 +157,11 @@ class ConversationInput extends Component {
 }
 
 const mapStateToProps = state => ({
-  token: state.user.tokens.token,
+  
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-  getConversation,
-  newConversation,
-  sendReply,
+  
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(ConversationInput);
