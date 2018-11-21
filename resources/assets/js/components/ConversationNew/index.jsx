@@ -52,13 +52,15 @@ class ConversationNew extends PureComponent {
   async componentDidMount() {
     const { getUsers, token } = this.props;
 
-
     await getUsers({ token });
   }
 
   async changeHandler(option) {
     const {
-      history, token, newConversation, getConversations,
+      history,
+      token,
+      newConversation,
+      getConversations,
     } = this.props;
 
     const id = await newConversation({
@@ -73,7 +75,10 @@ class ConversationNew extends PureComponent {
 
   render() {
     const {
-      match, history, users, userId,
+      match,
+      history,
+      users,
+      userId,
     } = this.props;
 
     if (match.params.recipientId) {
@@ -88,6 +93,8 @@ class ConversationNew extends PureComponent {
     if (!users.length) {
       return (null);
     }
+
+    console.log(users);
 
     return (
       <StyledSelect
