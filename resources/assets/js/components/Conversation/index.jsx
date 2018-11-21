@@ -109,7 +109,7 @@ class Conversation extends PureComponent {
       this.setState({
         typing: true,
       });
-      
+
       this.scrollBottom();
     });
   }
