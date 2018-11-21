@@ -3,11 +3,13 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import ReactRouterPropTypes from 'react-router-prop-types';
 import PropTypes from 'prop-types';
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import Ws from '@adonisjs/websocket-client';
 
 import Message from '../Message';
 import ConversationInput from '../ConversationInput';
 
-import { getConversation } from '../../actions/conversation';
+import { getConversation, setConversation, newMessage } from '../../actions/conversation';
 
 class Conversation extends PureComponent {
   static defaultProps = {
@@ -15,36 +17,127 @@ class Conversation extends PureComponent {
   }
 
   static propTypes = {
-    userId: PropTypes.number.isRequired,
     match: ReactRouterPropTypes.match.isRequired,
     history: ReactRouterPropTypes.history.isRequired,
-    getConversation: PropTypes.func.isRequired,
+    setConversation: PropTypes.func.isRequired,
+    newMessage: PropTypes.func.isRequired,
+    userId: PropTypes.number.isRequired,
     token: PropTypes.string.isRequired,
     messages: PropTypes.arrayOf(PropTypes.shape({
       id: PropTypes.number.isRequired,
-      conversation_id: PropTypes.number.isRequired,
-      user_id: PropTypes.number.isRequired,
+      conversationId: PropTypes.number.isRequired,
+      userId: PropTypes.number.isRequired,
       content: PropTypes.string.isRequired,
-      is_deleted: PropTypes.bool.isRequired,
-      new: PropTypes.bool.isRequired,
-      created_at: PropTypes.string.isRequired,
-      updated_at: PropTypes.string.isRequired,
+      createdAt: PropTypes.string.isRequired,
+      updatedAt: PropTypes.string.isRequired,
     })),
   }
 
+  constructor(props) {
+    super(props);
+
+    const { match } = this.props;
+
+    this.ws = Ws('ws://caspers-mbp.local:3333');
+    this.chat = this.ws.subscribe(`chat:${match.params.conversationId}`);
+
+    this.state = {
+      typing: false,
+    };
+  }
+
   componentDidMount() {
-    const { getConversation, token, match } = this.props;
+    const {
+      setConversation,
+      newMessage,
+      token,
+      match,
+      userId,
+      history,
+    } = this.props;
 
     if (!match.params.conversationId) {
       return;
     }
 
-    getConversation({ conversationId: match.params.conversationId, token });
+    this.ws
+      .withJwtToken(token)
+      .connect();
+
+    this.chat.emit('open');
+
+    this.chat.on('ready', ({
+      id, createdAt, updatedAt, messages, users,
+    }) => {
+      setConversation({
+        id,
+        createdAt,
+        updatedAt,
+        messages,
+        users,
+      });
+      this.scrollBottom();
+    });
+
+    this.chat.on('error', (error) => {
+      console.log(error);
+    });
+
+    this.chat.on('close', () => {
+    });
+
+    this.chat.on('disconnected', () => {
+      history.push('/');
+    });
+
+    this.chat.on('message', async (message) => {
+      await newMessage(message);
+      this.scrollBottom();
+    });
+
+    this.chat.on('typing', (user) => {
+      if (user.id === userId) {
+        return;
+      }
+
+      this.setState({
+        typing: true,
+      });
+      this.scrollBottom();
+    });
+
+    this.testInterval = setInterval(() => {
+      this.setState({
+        typing: false,
+      });
+    }, 3000);
+
+    /*
+    getConversation({
+      conversationId: match.params.conversationId,
+      token,
+    });
+    */
+  }
+
+  componentWillUnmount() {
+    this.ws = null;
+    this.chat = null;
+    this.testInterval = null;
+  }
+
+  scrollBottom() {
+    window.scrollTo(0, document.body.scrollHeight);
   }
 
   render() {
-    const { match, history, userId } = this.props;
+    const {
+      match,
+      history,
+      userId,
+    } = this.props;
     let { messages } = this.props;
+    const { typing } = this.state;
 
     if (!messages || !match.params.conversationId) {
       return (null);
@@ -52,7 +145,7 @@ class Conversation extends PureComponent {
 
     messages = messages.map(message => ({
       ...message,
-      sender: message.user_id === userId,
+      sender: message.userId === userId,
     }));
 
     return (
@@ -63,13 +156,27 @@ class Conversation extends PureComponent {
               key={message.id}
               id={message.id}
               content={message.content}
+              user={message.userId}
               sender={message.sender}
-              createdAt={message.created_at}
-              updatedAt={message.updated_at}
+              createdAt={message.createdAt}
+              updatedAt={message.updatedAt}
             />
           ))
         }
-        <ConversationInput receiverId={match.params.conversationId} type="conversation" history={history} />
+        {
+          typing && (
+            <SkeletonTheme color="#EEE" highlightColor="#DDD">
+              <Skeleton
+                width={10}
+                count="3"
+                style={{
+                  marginLeft: '1rem',
+                }}
+              />
+            </SkeletonTheme>
+          )
+        }
+        <ConversationInput receiverId={match.params.conversationId} type="conversation" history={history} chat={this.chat} />
       </Fragment>
     );
   }
@@ -77,12 +184,14 @@ class Conversation extends PureComponent {
 
 const mapStateToProps = state => ({
   token: state.user.tokens.token,
-  messages: state.conversation.currentConversation.messages,
+  messages: state.conversation.current.messages,
   userId: state.user.account.id,
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
   getConversation,
+  setConversation,
+  newMessage,
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(Conversation);
