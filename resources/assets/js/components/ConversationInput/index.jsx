@@ -2,11 +2,11 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
-import ReactRouterPropTypes from 'react-router-prop-types';
 import styled from 'styled-components';
 import { Button, Tooltip } from 'reactstrap';
 import EmojiPicker from 'emoji-picker-react';
 import EmojiConvertor from 'emoji-js';
+import { debounce } from 'lodash';
 
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faSmileBeam, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
@@ -52,38 +52,36 @@ const SendButton = styled(Button)`
 
 class ConversationInput extends Component {
   static propTypes = {
-    getConversation: PropTypes.func.isRequired,
-    newConversation: PropTypes.func.isRequired,
-    sendReply: PropTypes.func.isRequired,
-    type: PropTypes.oneOf([
-      'recipient',
-      'conversation',
-    ]).isRequired,
-    receiverId: PropTypes.string.isRequired,
-    token: PropTypes.string.isRequired,
-    history: ReactRouterPropTypes.history.isRequired,
+    chat: PropTypes.object.isRequired, // eslint-disable-line
   }
 
   constructor(props) {
     super(props);
+    const { chat } = this.props;
 
     this.state = {
       value: '',
       showEmojis: false,
     };
 
+    this.chat = chat;
+
     this.onChange = this.onChange.bind(this);
     this.onKeyDown = this.onKeyDown.bind(this);
     this.send = this.send.bind(this);
     this.addEmoji = this.addEmoji.bind(this);
     this.toggleEmojis = this.toggleEmojis.bind(this);
+    this.typing = debounce(this.typing, 500, {
+      leading: true,
+      maxWait: 1250,
+    });
   }
 
   componentDidMount() {
     this.scrollBottom();
   }
 
-  onKeyDown = (event) => {
+  onKeyDown(event) {
     if (event.key !== 'Enter') {
       return;
     }
@@ -94,9 +92,15 @@ class ConversationInput extends Component {
   onChange(event) {
     const { value } = event.target;
 
+    this.typing();
+
     this.setState({
       value,
     });
+  }
+
+  typing() {
+    this.chat.emit('typing');
   }
 
   scrollBottom() {
@@ -110,35 +114,9 @@ class ConversationInput extends Component {
       return;
     }
 
-    const {
-      getConversation,
-      newConversation,
-      sendReply,
-      type,
-      receiverId,
-      token,
-    } = this.props;
-
-    if (type === 'conversation') {
-      await sendReply({
-        conversationId: receiverId,
-        message: value,
-        token,
-      });
-
-      await getConversation({ conversationId: receiverId, token });
-      this.scrollBottom();
-    } else if (type === 'recipient') {
-      const { history } = this.props;
-
-      const conversationId = await newConversation({
-        recipientId: receiverId,
-        message: value,
-        token,
-      });
-
-      history.push(`/conversation/${conversationId}`);
-    }
+    this.chat.emit('message', {
+      content: value,
+    });
 
     this.setState({
       value: '',
