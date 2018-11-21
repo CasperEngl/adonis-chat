@@ -1,4 +1,9 @@
-import { GET_USERS, CURRENT_CONVERSATION, ALL_CONVERSATIONS } from '../actions/conversation';
+import {
+  GET_USERS,
+  CURRENT_CONVERSATION,
+  ALL_CONVERSATIONS,
+  NEW_MESSAGE,
+} from '../actions/conversation';
 
 const initialState = {
   users: [
@@ -7,8 +12,52 @@ const initialState = {
       email: '',
     },
   ],
-  currentConversation: {},
-  conversations: [],
+  current: {
+    id: 0,
+    createdAt: '',
+    updatedAt: '',
+    messages: [
+      {
+        id: 0,
+        conversationId: 0,
+        userId: 0,
+        content: '',
+        createdAt: '',
+        updatedAt: '',
+      },
+    ],
+    users: [
+      {
+        id: 0,
+        firstName: '',
+        lastName: '',
+        email: '',
+      },
+    ],
+  },
+  conversations: [
+    {
+      id: 0,
+      createdAt: '',
+      updatedAt: '',
+      message: {
+        id: 0,
+        conversationId: 0,
+        userId: 0,
+        content: '',
+        createdAt: '',
+        updatedAt: '',
+      },
+      users: [
+        {
+          id: 0,
+          firstName: '',
+          lastName: '',
+          email: '',
+        },
+      ],
+    },
+  ],
 };
 
 export default (state = initialState, action) => {
@@ -23,15 +72,27 @@ export default (state = initialState, action) => {
     case CURRENT_CONVERSATION:
       return {
         ...state,
-        currentConversation: {
-          participants: [],
-          messages: data.messages,
+        current: {
+          ...data,
         },
       };
     case ALL_CONVERSATIONS:
       return {
         ...state,
         conversations: data.conversations,
+      };
+    case NEW_MESSAGE:
+      return {
+        ...state,
+        current: {
+          ...state.current,
+          messages: [
+            ...state.current.messages,
+            {
+              ...data.message,
+            },
+          ],
+        },
       };
 
     default:
