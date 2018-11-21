@@ -7,6 +7,7 @@ import { LOGOUT_USER } from './user';
 export const GET_USERS = 'GET_USERS';
 export const CURRENT_CONVERSATION = 'CURRENT_CONVERSATION';
 export const ALL_CONVERSATIONS = 'ALL_CONVERSATIONS';
+export const NEW_MESSAGE = 'NEW_MESSAGE';
 
 export function getUsers({ token }) {
   return async function (dispatch) {
@@ -83,6 +84,36 @@ export function getConversation({ conversationId, token }) {
           },
         });
       }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+}
+
+export function setConversation(conversation) {
+  return async function (dispatch) {
+    try {
+      return dispatch({
+        type: CURRENT_CONVERSATION,
+        data: {
+          ...conversation,
+        },
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  };
+}
+
+export function newMessage(message) {
+  return async function (dispatch) {
+    try {
+      return dispatch({
+        type: NEW_MESSAGE,
+        data: {
+          message,
+        },
+      });
     } catch (err) {
       console.error(err);
     }
