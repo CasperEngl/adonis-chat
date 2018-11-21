@@ -12,6 +12,8 @@ import { library } from '@fortawesome/fontawesome-svg-core';
 import { faSmileBeam, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
+import { toggleEmojis, closeEmojis } from '../../actions/ui';
+
 library.add(faSmileBeam);
 library.add(faPaperPlane);
 
@@ -46,6 +48,9 @@ const SendButton = styled(Button)`
 
 class ConversationInput extends Component {
   static propTypes = {
+    toggleEmojis: PropTypes.func.isRequired,
+    closeEmojis: PropTypes.func.isRequired,
+    emojisOpen: PropTypes.bool.isRequired,
     chat: PropTypes.object.isRequired, // eslint-disable-line
   }
 
@@ -55,7 +60,6 @@ class ConversationInput extends Component {
 
     this.state = {
       value: '',
-      showEmojis: false,
     };
 
     this.chat = chat;
@@ -64,7 +68,6 @@ class ConversationInput extends Component {
     this.onKeyDown = this.onKeyDown.bind(this);
     this.send = this.send.bind(this);
     this.addEmoji = this.addEmoji.bind(this);
-    this.toggleEmojis = this.toggleEmojis.bind(this);
     this.typing = debounce(this.typing, 500, {
       leading: true,
       maxWait: 1250,
@@ -72,7 +75,7 @@ class ConversationInput extends Component {
   }
 
   componentDidMount() {
-    this.scrollBottom();
+    this.closeEmojis();
   }
 
   onKeyDown(event) {
@@ -97,10 +100,6 @@ class ConversationInput extends Component {
     this.chat.emit('typing');
   }
 
-  scrollBottom() {
-    window.scrollTo(0, document.body.scrollHeight);
-  }
-
   send() {
     const { value } = this.state;
 
@@ -120,7 +119,7 @@ class ConversationInput extends Component {
   addEmoji(code, data) {
     const emoji = new EmojiConvertor();
     const { value } = this.state;
-    
+
     const emote = emoji.replace_colons(`:${data.name}:`);
 
     this.setState({
@@ -129,13 +128,20 @@ class ConversationInput extends Component {
   }
 
   toggleEmojis() {
-    this.setState(prevState => ({
-      showEmojis: !prevState.showEmojis,
-    }));
+    const { toggleEmojis } = this.props;
+
+    toggleEmojis();
+  }
+
+  closeEmojis() {
+    const { closeEmojis } = this.props;
+
+    closeEmojis();
   }
 
   render() {
-    const { value, showEmojis } = this.state;
+    const { emojisOpen } = this.props;
+    const { value } = this.state;
 
     return (
       <EditorContainer>
@@ -143,7 +149,7 @@ class ConversationInput extends Component {
         <SmileyButton color="link" size="sm" onClick={this.toggleEmojis} id="emoji-selector">
           <FontAwesomeIcon icon={faSmileBeam} size="lg" />
         </SmileyButton>
-        <Tooltip innerClassName="emoji-tooltip" isOpen={showEmojis} hideArrow target="emoji-selector">
+        <Tooltip innerClassName="emoji-tooltip" isOpen={emojisOpen} hideArrow target="emoji-selector">
           <EmojiPicker onEmojiClick={this.addEmoji} disableDiversityPicker />
         </Tooltip>
         <SendButton onClick={this.send} color="primary" size="sm">
@@ -157,11 +163,12 @@ class ConversationInput extends Component {
 }
 
 const mapStateToProps = state => ({
-  
+  emojisOpen: state.ui.emojisOpen,
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-  
+  toggleEmojis,
+  closeEmojis,
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(ConversationInput);
