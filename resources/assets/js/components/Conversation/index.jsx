@@ -44,6 +44,12 @@ class Conversation extends PureComponent {
     this.state = {
       typing: false,
     };
+
+    this.typingInterval = setInterval(() => {
+      this.setState({
+        typing: false,
+      });
+    }, 3000);
   }
 
   componentDidMount() {
@@ -103,27 +109,15 @@ class Conversation extends PureComponent {
       this.setState({
         typing: true,
       });
+      
       this.scrollBottom();
     });
-
-    this.testInterval = setInterval(() => {
-      this.setState({
-        typing: false,
-      });
-    }, 3000);
-
-    /*
-    getConversation({
-      conversationId: match.params.conversationId,
-      token,
-    });
-    */
   }
 
   componentWillUnmount() {
     this.ws = null;
     this.chat = null;
-    this.testInterval = null;
+    this.typingInterval = null;
   }
 
   scrollBottom() {
