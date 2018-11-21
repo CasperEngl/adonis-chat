@@ -35,21 +35,17 @@ class ChatSidebar extends Component {
       updatedAt: PropTypes.string.isRequired,
       message: PropTypes.shape({
         id: PropTypes.number.isRequired,
-        conversation_id: PropTypes.number.isRequired,
-        user_id: PropTypes.number.isRequired,
+        conversationId: PropTypes.number.isRequired,
+        userId: PropTypes.number.isRequired,
         content: PropTypes.string.isRequired,
-        seen: PropTypes.bool.isRequired,
-        is_deleted: PropTypes.bool.isRequired,
-        created_at: PropTypes.string.isRequired,
-        updated_at: PropTypes.string.isRequired,
+        createdAt: PropTypes.string.isRequired,
+        updatedAt: PropTypes.string.isRequired,
       }),
       users: PropTypes.arrayOf(PropTypes.shape({
         id: PropTypes.number.isRequired,
-        first_name: PropTypes.string.isRequired,
-        last_name: PropTypes.string.isRequired,
+        firstName: PropTypes.string.isRequired,
+        lastName: PropTypes.string.isRequired,
         email: PropTypes.string.isRequired,
-        created_at: PropTypes.string.isRequired,
-        updated_at: PropTypes.string.isRequired,
       })),
     })).isRequired,
   }
@@ -119,7 +115,7 @@ class ChatSidebar extends Component {
                         {
                           conversation.users.map(user => (
                             <Fragment key={user.id}>
-                              {`${user.first_name} `}
+                              {`${user.firstName} `}
                             </Fragment>
                           ))
                         }
