@@ -18,13 +18,29 @@ class ConversationController {
       conversations = await Promise.all(conversationsJSON.map(async (conversation) => {
         const finder = await Conversation.find(conversation.id);
         const message = await finder.messages().last();
-        const users = await finder.users().fetch();
+        let users = await finder.users().fetch();
+        const usersJSON = await users.toJSON();
+
+        users = usersJSON.map(user => ({
+          id: user.id,
+          firstName: user.first_name,
+          lastName: user.last_name,
+          email: user.email,
+        }));
 
         return {
           id: conversation.id,
           createdAt: conversation.created_at,
           updatedAt: conversation.updated_at,
-          message: message ? await message.toJSON() : null,
+          message: message ? {
+            id: message.id,
+            conversationId: message.conversation_id,
+            userId: message.user_id,
+            content: message.content,
+            seen: message.seen,
+            createdAt: message.created_at,
+            updatedAt: message.updated_at,
+          } : null,
           users,
         };
       }));
@@ -94,11 +110,32 @@ class ConversationController {
   async show({ params, response }) {
     try {
       const conversation = await Conversation.find(params.id);
-      const messages = await conversation.messages().fetch();
-      const users = await conversation.users().fetch();
+      let messages = await conversation.messages().fetch();
+      const messagesJSON = await messages.toJSON();
+      let users = await conversation.users().fetch();
+      const usersJSON = await users.toJSON();
+
+      messages = messagesJSON.map(message => ({
+        id: message.id,
+        conversationId: message.conversation_id,
+        userId: message.user_id,
+        content: message.content,
+        seen: message.seen,
+        createdAt: message.created_at,
+        updatedAt: message.updated_at,
+      }));
+
+      users = usersJSON.map(user => ({
+        id: user.id,
+        firstName: user.first_name,
+        lastName: user.last_name,
+        email: user.email,
+      }))
 
       return {
-        conversation,
+        id: conversation.id,
+        createdAt: conversation.created_at,
+        updatedAt: conversation.updated_at,
         messages,
         users,
       };
