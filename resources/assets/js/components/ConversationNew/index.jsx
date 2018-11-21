@@ -94,8 +94,6 @@ class ConversationNew extends PureComponent {
       return (null);
     }
 
-    console.log(users);
-
     return (
       <StyledSelect
         isSearchable
