@@ -9,7 +9,7 @@ import { Container } from 'reactstrap';
 
 import ConversationInput from '../ConversationInput';
 
-import { getUsers } from '../../actions/conversation';
+import { getUsers, newConversation, getConversations } from '../../actions/conversation';
 
 const StyledSelect = styled(Select)`
   margin-top: 2rem;
@@ -29,6 +29,8 @@ class ConversationNew extends PureComponent {
 
   static propTypes = {
     getUsers: PropTypes.func.isRequired,
+    newConversation: PropTypes.func.isRequired,
+    getConversations: PropTypes.func.isRequired,
     token: PropTypes.string.isRequired,
     users: PropTypes.arrayOf(PropTypes.shape({
       id: PropTypes.number.isRequired,
@@ -54,10 +56,19 @@ class ConversationNew extends PureComponent {
     await getUsers({ token });
   }
 
-  changeHandler(option) {
-    const { history } = this.props;
+  async changeHandler(option) {
+    const {
+      history, token, newConversation, getConversations,
+    } = this.props;
 
-    history.push(`/conversation/new/${option.value}`);
+    const id = await newConversation({
+      id: option.value,
+      token,
+    });
+
+    getConversations({ token });
+
+    history.push(`/conversation/${id}`);
   }
 
   render() {
@@ -102,6 +113,8 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => bindActionCreators({
   getUsers,
+  newConversation,
+  getConversations,
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(ConversationNew);
