@@ -13,4 +13,4 @@
 
 const Ws = use('Ws');
 
-Ws.channel('api/v1/chat/{id}', 'ChatController');
+Ws.channel('chat:*', 'ChatController').middleware(['auth']);
