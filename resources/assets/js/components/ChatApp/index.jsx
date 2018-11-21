@@ -16,14 +16,13 @@ import SignIn from '../SignIn';
 import SignUp from '../SignUp';
 import Users from '../Users';
 
-import { getConversations, sendReply } from '../../actions/conversation';
+import { getConversations } from '../../actions/conversation';
 import { closeNav } from '../../actions/ui';
 
 class ChatApp extends PureComponent {
   static propTypes = {
     closeNav: PropTypes.func.isRequired,
     getConversations: PropTypes.func.isRequired,
-    sendReply: PropTypes.func.isRequired,
     token: PropTypes.string.isRequired,
     isAuthenticated: PropTypes.bool.isRequired,
   }
@@ -33,14 +32,7 @@ class ChatApp extends PureComponent {
       closeNav,
       getConversations,
       token,
-      sendReply,
     } = this.props;
-
-    // sendReply({
-    //   conversationId: 4,
-    //   message: 'lell',
-    //   token,
-    // });
 
     closeNav();
     getConversations({ token });
@@ -82,7 +74,6 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => bindActionCreators({
   getConversations,
   closeNav,
-  sendReply,
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(ChatApp);
