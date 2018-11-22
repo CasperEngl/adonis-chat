@@ -38,7 +38,7 @@ class Conversation extends PureComponent {
 
     const { match } = this.props;
 
-    this.ws = Ws('ws://caspers-mbp.local:3333');
+    this.ws = Ws('ws://casper.local:3333');
     this.chat = this.ws.subscribe(`chat:${match.params.conversationId}`);
 
     this.state = {
