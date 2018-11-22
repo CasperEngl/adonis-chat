@@ -46,16 +46,20 @@ class ChatController {
         email: user.email,
       }));
 
+      const data = {
+        id: conversation.id,
+        createdAt: conversation.created_at,
+        updatedAt: conversation.updated_at,
+        messages,
+        users,
+      };
+
+      console.log('user opened chat');
+
       Ws
         .getChannel('chat:*')
         .topic(this.topic)
-        .broadcast('ready', {
-          id: conversation.id,
-          createdAt: conversation.created_at,
-          updatedAt: conversation.updated_at,
-          messages,
-          users,
-        });
+        .broadcast('ready', data);
     } catch (err) {
       console.error(err);
     }
@@ -90,18 +94,22 @@ class ChatController {
       content,
     });
 
+    const data = {
+      id: message.id,
+      conversationId: message.conversation_id,
+      userId: message.user_id,
+      content: message.content,
+      seen: message.seen,
+      createdAt: message.created_at,
+      updatedAt: message.updated_at,
+    };
+
+    console.log('sending message', data);
+
     Ws
       .getChannel('chat:*')
       .topic(this.topic)
-      .broadcast('message', {
-        id: message.id,
-        conversationId: message.conversation_id,
-        userId: message.user_id,
-        content: message.content,
-        seen: message.seen,
-        createdAt: message.created_at,
-        updatedAt: message.updated_at,
-      });
+      .broadcast('message', data);
     // this.socket.broadcastToAll('message', message);
   }
 
@@ -109,6 +117,7 @@ class ChatController {
     const user = await this.auth.getUser();
 
     console.log(`${user.id} is typing in ${this.topic}`);
+
     Ws
       .getChannel('chat:*')
       .topic(this.topic)
