@@ -36,11 +36,6 @@ class Conversation extends PureComponent {
   constructor(props) {
     super(props);
 
-    const { match } = this.props;
-
-    this.ws = Ws('ws://casper.local:3333');
-    this.chat = this.ws.subscribe(`chat:${match.params.conversationId}`);
-
     this.state = {
       typing: false,
     };
@@ -50,6 +45,11 @@ class Conversation extends PureComponent {
         typing: false,
       });
     }, 3000);
+
+    const { match } = this.props;
+
+    this.ws = Ws('ws://casper.local:3333');
+    this.chat = this.ws.subscribe(`chat:${match.params.conversationId}`);
   }
 
   componentDidMount() {
@@ -73,7 +73,11 @@ class Conversation extends PureComponent {
     this.chat.emit('open');
 
     this.chat.on('ready', ({
-      id, createdAt, updatedAt, messages, users,
+      id,
+      createdAt,
+      updatedAt,
+      messages,
+      users,
     }) => {
       setConversation({
         id,
