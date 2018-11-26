@@ -74,59 +74,67 @@ class ChatController {
   }
 
   async onMessage({ content }) {
-    const user = await this.auth.getUser();
-    const id = this.topic.split('chat:').pop();
+    try {
+      const user = await this.auth.getUser();
+      const id = this.topic.split('chat:').pop();
 
-    const conversation = await Conversation.find(id);
-    const users = await conversation.users().fetch();
-    const usersJSON = await users.toJSON();
+      const conversation = await Conversation.find(id);
+      const users = await conversation.users().fetch();
+      const usersJSON = await users.toJSON();
 
-    const userInConversation = usersJSON.find(u => u.id === user.id);
+      const userInConversation = usersJSON.find(u => u.id === user.id);
 
-    if (!userInConversation) {
-      this.socket.emit('disconnected');
-      return;
+      if (!userInConversation) {
+        this.socket.emit('disconnected');
+        return;
+      }
+
+      const message = await conversation.messages().create({
+        conversation_id: id,
+        user_id: user.id,
+        content,
+      });
+
+      const data = {
+        id: message.id,
+        conversationId: message.conversation_id,
+        userId: message.user_id,
+        content: message.content,
+        seen: message.seen,
+        createdAt: message.created_at,
+        updatedAt: message.updated_at,
+      };
+
+      console.log('sending message', data);
+
+      Ws
+        .getChannel('chat:*')
+        .topic(this.topic)
+        .broadcast('message', data);
+      // this.socket.broadcastToAll('message', message);
+    } catch (err) {
+      console.error(err);
     }
-
-    const message = await conversation.messages().create({
-      conversation_id: id,
-      user_id: user.id,
-      content,
-    });
-
-    const data = {
-      id: message.id,
-      conversationId: message.conversation_id,
-      userId: message.user_id,
-      content: message.content,
-      seen: message.seen,
-      createdAt: message.created_at,
-      updatedAt: message.updated_at,
-    };
-
-    console.log('sending message', data);
-
-    Ws
-      .getChannel('chat:*')
-      .topic(this.topic)
-      .broadcast('message', data);
-    // this.socket.broadcastToAll('message', message);
   }
 
   async onTyping() {
-    const user = await this.auth.getUser();
+    try {
+      const user = await this.auth.getUser();
 
-    console.log(`${user.id} is typing in ${this.topic}`);
+      console.log(`${user.id} is typing in ${this.topic}`);
 
-    Ws
-      .getChannel('chat:*')
-      .topic(this.topic)
-      .broadcast('typing', {
-        id: user.id,
-        email: user.email,
-        firstName: user.first_name,
-        lastName: user.last_name,
-      });
+      Ws
+        .getChannel('chat:*')
+        .topic(this.topic)
+        .broadcast('typing', {
+          id: user.id,
+          email: user.email,
+          firstName: user.first_name,
+          lastName: user.last_name,
+        });
+    } catch (err) {
+      console.error(err);
+    }
   }
 }
 
